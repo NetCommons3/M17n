@@ -28,9 +28,6 @@
         "mustangostang/spyc":      "dev-master",
         "satooshi/php-coveralls":  "dev-master"
     },
-    "bin": [
-        "lib/Cake/Console/cake"
-    ],
     "config": {
         "vendor-dir": "vendors",
         "process-timeout": 3000
