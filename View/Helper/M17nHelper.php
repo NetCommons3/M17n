@@ -485,6 +485,10 @@ class M17nHelper extends FormHelper {
 
 /**
  * @constructor
+ *
+ * @param View $View View
+ * @param array $settings settings
+ * @return void
  */
 	public function __construct(View $View, $settings = array()) {
 		$this->__mapper = $this->__parseLangHeaders();
@@ -496,7 +500,7 @@ class M17nHelper extends FormHelper {
 /**
  * Sets Defaults
  *
- * @param string $lang
+ * @param string $lang language
  * @param string|null $country optional
  * @return bool
  */
@@ -592,8 +596,8 @@ class M17nHelper extends FormHelper {
 /**
  * Sorts request lang code weights
  *
- * @param object $lang1
- * @param object $lang2
+ * @param object $lang1 lang1
+ * @param object $lang2 lang2
  * @return int
  */
 	public function weightSort($lang1, $lang2) {
@@ -609,7 +613,7 @@ class M17nHelper extends FormHelper {
 /**
  * Finds selected element
  *
- * @param string $fieldName
+ * @param string $fieldName field name
  * @return assoc
  */
 	private function __getSelected($fieldName) {
@@ -639,8 +643,8 @@ class M17nHelper extends FormHelper {
 /**
  * Outputs country list
  *
- * @param string $fieldName
- * @param assoc $options
+ * @param string $fieldName field name
+ * @param assoc $options options
  * @return string
  */
 	public function countries($fieldName, $options = array()) {
@@ -675,8 +679,8 @@ class M17nHelper extends FormHelper {
 /**
  * Outputs language list
  *
- * @param string $fieldName
- * @param assoc $options
+ * @param string $fieldName field name
+ * @param assoc $options options
  * @return string
  */
 	public function languages($fieldName, $options = array()) {
