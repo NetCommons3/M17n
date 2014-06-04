@@ -484,7 +484,7 @@ class M17nHelper extends FormHelper {
 	private $__countryCode = null;
 
 /**
- * @constructor
+ * Constructor
  *
  * @param View $View View
  * @param array $settings settings
@@ -545,7 +545,7 @@ class M17nHelper extends FormHelper {
 /**
  * Parses HTTP Request Language Headers
  *
- * @param string $accept
+ * @param string $accept accept language
  * @return array
  */
 	private function __parseLangHeaders($accept = null) {
