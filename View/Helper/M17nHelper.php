@@ -39,12 +39,30 @@
  */
 App::uses('FormHelper', 'View/Helper');
 
+/**
+ * M17n Helper
+ */
 class M17nHelper extends FormHelper {
 
+/**
+ * Helpers
+ *
+ * @var array
+ */
 	public $helpers = array('Form', 'Html');
 
+/**
+ * Mappers
+ *
+ * @var array
+ */
 	private $__mapper = array();
 
+/**
+ * Country code map
+ *
+ * @var array
+ */
 	private static $__countries = array(
 		'af' => 'Afganistan',
 		'al' => 'Albania',
@@ -287,6 +305,11 @@ class M17nHelper extends FormHelper {
 		'zw' => 'Zimbabwe'
 	);
 
+/**
+ * Language code map
+ *
+ * @var array
+ */
 	private static $__languages = array(
 		'ab' => 'Abkhazian',
 		'aa' => 'Afar',
@@ -475,12 +498,32 @@ class M17nHelper extends FormHelper {
 		'zu' => 'Zulu'
 	);
 
+/**
+ * Default language code synonym
+ *
+ * @var string
+ */
 	private $__defaultLang = 'en';
 
+/**
+ * Default country code synonym
+ *
+ * @var string
+ */
 	private $__defaultCountry = 'us';
 
+/**
+ * Default language code
+ *
+ * @var string
+ */
 	private $__langCode = null;
 
+/**
+ * Default country code
+ *
+ * @var string
+ */
 	private $__countryCode = null;
 
 /**

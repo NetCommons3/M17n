@@ -1,5 +1,10 @@
 <?php
+/**
+ * M17n Controller
+ */
+
 App::uses('AppController', 'Controller');
+
 /**
  * M17n Controller
  *
