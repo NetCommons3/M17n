@@ -1,5 +1,11 @@
 <?php
 /**
+ * M17n Helper
+ */
+
+App::uses('FormHelper', 'View/Helper');
+
+/**
  * Outputs a country select list and/or a language select list. Automatically
  * detects language and country codes from browser headers.
  *
@@ -36,11 +42,6 @@
  *   Licensed under The MIT License
  *   Redistributions of files must retain the above copyright notice.
  * @SuppressWarnings(PHPMD)
- */
-App::uses('FormHelper', 'View/Helper');
-
-/**
- * M17n Helper
  */
 class M17nHelper extends FormHelper {
 
