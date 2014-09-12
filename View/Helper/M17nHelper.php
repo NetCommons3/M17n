@@ -41,7 +41,6 @@ App::uses('FormHelper', 'View/Helper');
  * @license
  *   Licensed under The MIT License
  *   Redistributions of files must retain the above copyright notice.
- * @SuppressWarnings(PHPMD)
  */
 class M17nHelper extends FormHelper {
 
@@ -591,6 +590,7 @@ class M17nHelper extends FormHelper {
  *
  * @param string $accept accept language
  * @return array
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 	private function __parseLangHeaders($accept = null) {
 		if ($accept === null) {
@@ -600,7 +600,7 @@ class M17nHelper extends FormHelper {
 		}
 		$langs = preg_split('/\s*,\s*/i', $langHead, -1, PREG_SPLIT_NO_EMPTY);
 		$out = array();
-		$i = 0;
+		$index = 0;
 		$weightIndex = 1;
 		foreach ($langs as $lang) {
 			$opts = preg_split('/\s*;\s*/i', $lang, -1, PREG_SPLIT_NO_EMPTY);
@@ -628,7 +628,7 @@ class M17nHelper extends FormHelper {
 				'country' => $ctryCode,
 				'weight' => $weight
 			);
-			$i++;
+			$index++;
 			if ($weightIndex > 0) {
 				$weightIndex -= .1;
 			}
@@ -671,12 +671,12 @@ class M17nHelper extends FormHelper {
 			return null;
 		}
 		$obj = $this->data;
-		$i = 0;
+		$index = 0;
 		while (true) {
 			if (is_array($obj)) {
-				if (array_key_exists($ent[$i], $obj)) {
-					$obj = $obj[$ent[$i]];
-					$i++;
+				if (array_key_exists($ent[$index], $obj)) {
+					$obj = $obj[$ent[$index]];
+					$index++;
 				}
 			} else {
 				return $obj;
