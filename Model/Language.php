@@ -20,7 +20,7 @@ class Language extends AppModel {
  * @var array
  */
 	public $validate = array(
-		'display_name' => array(
+		'code' => array(
 			'notEmpty' => array(
 				'rule' => array('notEmpty'),
 				//'message' => 'Your custom message here',
@@ -30,7 +30,7 @@ class Language extends AppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
-		'display_sequence' => array(
+		'weight' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
 				//'message' => 'Your custom message here',
@@ -40,8 +40,8 @@ class Language extends AppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
-		'display_flag' => array(
-			'numeric' => array(
+		'is_active' => array(
+			'boolean' => array(
 				'rule' => array('numeric'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
