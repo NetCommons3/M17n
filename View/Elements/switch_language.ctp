@@ -16,12 +16,12 @@ App::uses('L10n', 'I18n');
 $L10n = new L10n();
 ?>
 
-<div ng-init="activeLangCode = '<?php echo h($activeLangCode); ?>'">
+<div ng-init="activeLangId = '<?php echo h($activeLangId); ?>'">
 	<ul class="nav nav-pills pull-right small" role="tablist">
 		<?php foreach ($languages as $langId => $langCode) : ?>
-			<li class="<?php echo ($activeLangCode === $langCode ? 'active' : ''); ?>">
-				<a class="nc-switch-language" href="#<?php echo $prefix . $langCode ?>" role="tab" data-toggle="tab"
-					ng-click="activeLangCode = '<?php echo $langCode; ?>'">
+			<li class="<?php echo ($activeLangId === (string)$langId ? 'active' : ''); ?>">
+				<a class="nc-switch-language" href="#<?php echo $prefix . $langId ?>" role="tab" data-toggle="tab"
+					ng-click="activeLangId = '<?php echo $langId; ?>'">
 
 					<?php $catalog = $L10n->catalog($langCode);
 							echo __($catalog['language']); ?>
@@ -30,7 +30,7 @@ $L10n = new L10n();
 		<?php endforeach; ?>
 	</ul>
 
-	<input type="hidden" name="active_lang_code" ng-value="activeLangCode">
-	<?php $this->Form->unlockField('active_lang_code'); ?>
+	<input type="hidden" name="active_lang_id" ng-value="activeLangId">
+	<?php $this->Form->unlockField('active_lang_id'); ?>
 </div>
 <br />

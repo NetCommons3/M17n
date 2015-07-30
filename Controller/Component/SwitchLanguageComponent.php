@@ -41,10 +41,10 @@ class SwitchLanguageComponent extends Component {
 		));
 		$this->controller->set('languages', $languages);
 
-		if (isset($this->controller->data['active_lang_code'])) {
-			$this->controller->set('activeLangCode', $this->controller->data['active_lang_code']);
+		if (isset($this->controller->data['active_language_id'])) {
+			$this->controller->set('activeLangId', $this->controller->data['active_language_id']);
 		} else {
-			$this->controller->set('activeLangCode', Configure::read('Config.language'));
+			$this->controller->set('activeLangId', Configure::read('Config.languageId'));
 		}
 	}
 

@@ -29,7 +29,7 @@ class SwitchLanguageHelper extends AppHelper {
 		return $this->_View->element('M17n.switch_language', array(
 			'prefix' => $prefix,
 			'languages' => $this->_View->viewVars['languages'],
-			'activeLangCode' => $this->_View->viewVars['activeLangCode'],
+			'activeLangId' => $this->_View->viewVars['activeLangId'],
 		));
 	}
 }
