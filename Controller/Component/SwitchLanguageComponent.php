@@ -26,11 +26,12 @@ class SwitchLanguageComponent extends Component {
  * @return void
  */
 	public function startup(Controller $controller) {
+		$this->controller = $controller;
+
 		//RequestActionの場合、スキップする
 		if (! empty($this->controller->request->params['requested'])) {
 			return;
 		}
-		$this->controller = $controller;
 		$this->controller->helpers[] = 'M17n.SwitchLanguage';
 
 		//言語データ取得
