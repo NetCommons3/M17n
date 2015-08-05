@@ -38,7 +38,6 @@ class SwitchLanguageComponent extends Component {
 		$Language = ClassRegistry::init('M17n.Language');
 		$languages = $Language->find('list', array(
 			'fields' => array('Language.id', 'Language.code'),
-			'conditions' => array('Language.code' => Configure::read('Config.language')) //多言語の登録処理を後で追加
 		));
 		$this->controller->set('languages', $languages);
 
