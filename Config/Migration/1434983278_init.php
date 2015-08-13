@@ -55,34 +55,6 @@ Only user w/ administrator role can edit this flag whether it\'s true or false.'
 	);
 
 /**
- * Records keyed by model name.
- *
- * @var array $records
- */
-	public $records = array(
-		'Language' => array(
-			array(
-				'id' => '1',
-				'code' => 'en',
-				'weight' => '1',
-				'is_active' => true,
-			),
-			array(
-				'id' => '2',
-				'code' => 'ja',
-				'weight' => '2',
-				'is_active' => true,
-			),
-			array(
-				'id' => '3',
-				'code' => 'zh',
-				'weight' => '3',
-				'is_active' => true,
-			),
-		),
-	);
-
-/**
  * Before migration callback
  *
  * @param string $direction Direction of migration process (up or down)
@@ -99,36 +71,6 @@ Only user w/ administrator role can edit this flag whether it\'s true or false.'
  * @return bool Should process continue
  */
 	public function after($direction) {
-		if ($direction === 'down') {
-			return true;
-		}
-
-		foreach ($this->records as $model => $records) {
-			if (!$this->updateRecords($model, $records)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-/**
- * Update model records
- *
- * @param string $model model name to update
- * @param string $records records to be stored
- * @param string $scope ?
- * @return bool Should process continue
- */
-	public function updateRecords($model, $records, $scope = null) {
-		$Model = $this->generateModel($model);
-		foreach ($records as $record) {
-			$Model->create();
-			if (!$Model->save($record, false)) {
-				return false;
-			}
-		}
-
 		return true;
 	}
 }

@@ -695,7 +695,8 @@ class M17nHelper extends FormHelper {
 		$options = array_merge(array(
 			'label' => __('Country', true),
 			'default' => null,
-			'class' => null
+			'class' => null,
+			'enable' => array('jp' => true, 'us' => true, 'cn' => true)
 		), $options);
 		$selected = $this->__getSelected($fieldName);
 		if ($selected === null || !array_key_exists($selected, self::$__countries)) {
@@ -706,8 +707,8 @@ class M17nHelper extends FormHelper {
 			}
 		}
 		$opts = array();
-		$enable = array('jp' => true, 'us' => true, 'cn' => true);
-		$opts['options'] = array_intersect_key(self::$__countries, $enable);
+		//$enable = array('jp' => true, 'us' => true, 'cn' => true);
+		$opts['options'] = array_intersect_key(self::$__countries, $options['enable']);
 		$opts['options'] = array_map('__', $opts['options']);
 		$opts['selected'] = $selected;
 		$opts['multiple'] = false;
@@ -732,7 +733,8 @@ class M17nHelper extends FormHelper {
 			'label' => __('Language', true),
 			'default' => null,
 			'class' => null,
-			'div' => null
+			'div' => null,
+			'enable' => array('ja' => true, 'en' => true, 'zh' => true)
 		), $options);
 		$selected = $this->__getSelected($fieldName);
 		if ($selected === null || !array_key_exists($selected, self::$__languages)) {
@@ -746,8 +748,8 @@ class M17nHelper extends FormHelper {
 		}
 
 		$opts = array();
-		$enable = array('ja' => true, 'en' => true, 'zh' => true);
-		$opts['options'] = array_intersect_key(self::$__languages, $enable);
+		//$enable = array('ja' => true, 'en' => true, 'zh' => true);
+		$opts['options'] = array_intersect_key(self::$__languages, $options['enable']);
 		$opts['options'] = array_map('__', $opts['options']);
 		$opts['selected'] = $selected;
 		$opts['multiple'] = false;
