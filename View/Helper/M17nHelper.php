@@ -499,20 +499,6 @@ class M17nHelper extends FormHelper {
 	);
 
 /**
- * Default language code synonym
- *
- * @var string
- */
-	private $__defaultLang = 'en';
-
-/**
- * Default country code synonym
- *
- * @var string
- */
-	private $__defaultCountry = 'us';
-
-/**
  * Default language code
  *
  * @var string
@@ -538,21 +524,6 @@ class M17nHelper extends FormHelper {
 		$this->__langCode = $this->__findLangCode();
 		$this->__countryCode = $this->__findCountryCode();
 		parent::__construct($View, $settings);
-	}
-
-/**
- * Sets Defaults
- *
- * @param string $lang language
- * @param string|null $country optional
- * @return bool
- */
-	public function setDefaults($lang, $country = null) {
-		$this->__defaultLang = $lang;
-		if ($country !== null) {
-			$this->__defaultCountry = $country;
-		}
-		return true;
 	}
 
 /**
@@ -661,7 +632,7 @@ class M17nHelper extends FormHelper {
  * @return assoc
  */
 	private function __getSelected($fieldName) {
-		if (empty($this->data)) {
+		if (empty($this->request->data)) {
 			return null;
 		}
 		$view =& ClassRegistry::getObject('view');
@@ -670,7 +641,7 @@ class M17nHelper extends FormHelper {
 		if (empty($ent)) {
 			return null;
 		}
-		$obj = $this->data;
+		$obj = $this->request->data;
 		$index = 0;
 		while (true) {
 			if (is_array($obj)) {
@@ -696,6 +667,7 @@ class M17nHelper extends FormHelper {
 			'label' => __('Country', true),
 			'default' => null,
 			'class' => null,
+			'div' => null,
 			'enable' => array('jp' => true, 'us' => true, 'cn' => true)
 		), $options);
 		$selected = $this->__getSelected($fieldName);
