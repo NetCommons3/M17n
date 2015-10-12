@@ -283,7 +283,7 @@ class M17nBehavior extends OriginalKeyBehavior {
 			));
 			$conditions = array(
 				'key' => $origin[$this->$assocModel->alias]['key'],
-				'language_id' => $data[$model->alias][$key]
+				'language_id' => $data[$model->alias]['language_id']
 			);
 			if (isset($association['conditions'])) {
 				foreach ($association['conditions'] as $key) {
