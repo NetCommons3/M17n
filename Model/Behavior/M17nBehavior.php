@@ -117,15 +117,13 @@ class M17nBehavior extends OriginalKeyBehavior {
 				$data[$model->alias]['language_id'] = $target[$model->alias]['language_id'];
 			}
 			//frame_idのセット
-			if ($model->hasField('frame_id')) {
-				if (isset($target['Frame']['language_id'])) {
-					$data[$model->alias]['frame_id'] = Current::readM17n($target['Frame']['language_id'], 'Frame', 'id');
-				} elseif (isset($target[$model->alias]['frame_id'])) {
-					$data[$model->alias]['frame_id'] = $target[$model->alias]['frame_id'];
-				}
-			}
-			//その他のidをセット
-			$data = $this->__getAssociationsData($model, $data, $target);
+			$data = $this->__getFrameId($model, $data, $target);
+
+			//block_id取得
+			$data = $this->__getBlockId($model, $data, $target);
+
+			//その他のid取得
+			$data = $this->__getAssociationsId($model, $data);
 
 			//登録処理
 			$model->create();
@@ -222,14 +220,35 @@ class M17nBehavior extends OriginalKeyBehavior {
 	}
 
 /**
- * 関連データ取得
+ * frame_id取得
  *
  * @param Model $model Model using this behavior
  * @param array $data 登録データ
  * @param array $target ターゲットデータ
  * @return bool
  */
-	private function __getAssociationsData(Model $model, $data, $target) {
+	private function __getFrameId(Model $model, $data, $target) {
+		//frame_idのセット
+		if ($model->hasField('frame_id')) {
+			if (isset($target['Frame']['language_id'])) {
+				$data[$model->alias]['frame_id'] = Current::readM17n($target['Frame']['language_id'], 'Frame', 'id');
+			} elseif (isset($target[$model->alias]['frame_id'])) {
+				$data[$model->alias]['frame_id'] = $target[$model->alias]['frame_id'];
+			}
+		}
+
+		return $data;
+	}
+
+/**
+ * block_id取得
+ *
+ * @param Model $model Model using this behavior
+ * @param array $data 登録データ
+ * @param array $target ターゲットデータ
+ * @return bool
+ */
+	private function __getBlockId(Model $model, $data, $target) {
 		//block_idのセット
 		if ($model->hasField('block_id')) {
 			if (isset($target['Block']['language_id'])) {
@@ -238,6 +257,18 @@ class M17nBehavior extends OriginalKeyBehavior {
 				$data[$model->alias]['block_id'] = $target[$model->alias]['block_id'];
 			}
 		}
+
+		return $data;
+	}
+
+/**
+ * 関連テーブルのID取得
+ *
+ * @param Model $model Model using this behavior
+ * @param array $data 登録データ
+ * @return bool
+ */
+	private function __getAssociationsId(Model $model, $data) {
 		//その他のidをセット
 		foreach ($this->settings['associations'] as $field => $association) {
 			if (! isset($data[$model->alias][$field]) || ! $data[$model->alias][$field]) {
@@ -252,9 +283,12 @@ class M17nBehavior extends OriginalKeyBehavior {
 			));
 			$conditions = array(
 				'key' => $origin[$this->$assocModel->alias]['key'],
+				'language_id' => $data[$model->alias][$key]
 			);
-			foreach ($association['conditions'] as $key) {
-				$conditions[$key] = $data[$model->alias][$key];
+			if (isset($association['conditions'])) {
+				foreach ($association['conditions'] as $key) {
+					$conditions[$key] = $data[$model->alias][$key];
+				}
 			}
 			$assoc = $this->$assocModel->find('first', array(
 				'recursive' => -1,
