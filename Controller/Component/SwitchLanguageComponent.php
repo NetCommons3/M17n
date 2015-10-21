@@ -47,7 +47,7 @@ class SwitchLanguageComponent extends Component {
 		if (isset($this->controller->data['active_language_id'])) {
 			$this->controller->set('activeLangId', $this->controller->data['active_language_id']);
 		} else {
-			$this->controller->set('activeLangId', Configure::read('Config.languageId'));
+			$this->controller->set('activeLangId', Current::read('Language.id'));
 		}
 	}
 
