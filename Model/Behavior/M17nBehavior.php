@@ -145,7 +145,7 @@ class M17nBehavior extends OriginalKeyBehavior {
  */
 	private function __getOriginalData(Model $model) {
 		$this->__originalData = $model->find('first', array(
-			'recursive' => 0,
+			'recursive' => -1,
 			'conditions' => array($model->alias . '.key' => $model->data[$model->alias]['key']),
 			'order' => array($model->alias . '.id' => 'asc'),
 		));
@@ -197,7 +197,6 @@ class M17nBehavior extends OriginalKeyBehavior {
 				'order' => array('id' => 'desc'),
 			));
 
-			$fields = array('id', 'language_id');
 			$conditions = array(
 				$model->alias . '.key' => $model->data[$model->alias]['key'],
 				$model->alias . '.language_id !=' => Current::read('Language.id'),
@@ -205,7 +204,6 @@ class M17nBehavior extends OriginalKeyBehavior {
 				$model->alias . '.modified' => $this->__beforeLastestData[$model->alias]['modified'],
 			);
 		} else {
-			$fields = array('id', 'language_id');
 			$conditions = array(
 				$model->alias . '.key' => $model->data[$model->alias]['key'],
 				$model->alias . '.language_id !=' => Current::read('Language.id'),
