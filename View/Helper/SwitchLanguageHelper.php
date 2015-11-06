@@ -20,7 +20,16 @@ App::uses('AppHelper', 'View/Helper');
 class SwitchLanguageHelper extends AppHelper {
 
 /**
- * Output with tablist format as language switch
+ * Other helpers used by FormHelper
+ *
+ * @var array
+ */
+	public $helpers = array(
+		'NetCommons.NetCommonsHtml',
+	);
+
+/**
+ * 言語切り替えタブ
  *
  * @param string $prefix It is id attribute prefix
  * @return string
@@ -32,4 +41,55 @@ class SwitchLanguageHelper extends AppHelper {
 			'activeLangId' => $this->_View->viewVars['activeLangId'],
 		));
 	}
+
+/**
+ * 言語ラベル(切り替え)
+ *
+ * @param string $name ラベル名
+ * @param array $divOptions ラベル名
+ * @return string
+ */
+	public function label($name, $classOptions = array(), $divOptions = array()) {
+		$element = '';
+
+		App::uses('L10n', 'I18n');
+		$L10n = new L10n();
+
+		foreach ($this->_View->viewVars['languages'] as $id => $code) {
+			$catalog = $L10n->catalog($code);
+
+			$element .= $this->NetCommonsHtml->div($classOptions,
+				h($name) . ' ' . __d('m17n', '(' . $catalog['language'] . ')'),
+				Hash::merge(array(
+					'ng-show' => 'activeLangId === \'' . $id . '\'',
+					'ng-cloak' => 'true',
+				), $divOptions)
+			);
+		}
+
+		return $element;
+	}
+
+
+/**
+ * 言語inputラベル(切り替え)
+ *
+ * @param string $name ラベル名
+ * @param int $languageId 言語ID
+ * @return string
+ */
+	public function inputLabel($name, $languageId) {
+		$element = h($name);
+
+		if (isset($languageId)) {
+			App::uses('L10n', 'I18n');
+			$L10n = new L10n();
+			$catalog = $L10n->catalog($this->_View->viewVars['languages'][$languageId]);
+
+			$element .=  ' ' . __d('m17n', '(' . $catalog['language'] . ')');
+		}
+
+		return $element;
+	}
+
 }
