@@ -16,6 +16,34 @@ App::uses('OriginalKeyBehavior', 'NetCommons.Model/Behavior');
 /**
  * M17nBehavior
  *
+ * 登録するコンテンツデータに対して、対応している言語分登録します。<br>
+ * 対応言語を運用途中で追加できません。
+ *
+ * コンテンツデータのテーブルに以下のフィールドを保持してください。
+ * * key
+ *     異なる言語で同一のデータが登録されます。
+ * * language_id
+ *     言語コードに対応するidが登録されます。
+ *
+ * コンテンツデータがbelongsToのアソシエーションを持ち、アソシエーション側でも言語ごとにデータがある場合は、
+ * 登録時に外部キーとしてのIDを取得するための情報を指定してください。<br>
+ * 指定内容は、外部キーのフィールド名、アソシエーションモデル名、ID取得条件です。
+ *
+ * #### サンプルコード
+ * ```
+ * public $actsAs = array(
+ * 	'M17n.M17n' => array(
+ * 		'associations' => array(
+ * 			'faq_id' => array(
+ * 				'className' => 'Faqs.Faq',
+ * 			),
+ * 			'category_id' => array(
+ * 				'className' => 'Categories.Category',
+ * 			),
+ * 		)
+ * 	),
+ * ```
+ *
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package  NetCommons\M17n\Model\Befavior
  */
