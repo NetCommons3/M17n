@@ -46,7 +46,8 @@ class SwitchLanguageHelper extends AppHelper {
  * 言語ラベル(切り替え)
  *
  * @param string $name ラベル名
- * @param array $divOptions ラベル名
+ * @param array $classOptions CSSのクラスオプション
+ * @param array $divOptions DIVオプション
  * @return string
  */
 	public function label($name, $classOptions = array(), $divOptions = array()) {
@@ -70,7 +71,6 @@ class SwitchLanguageHelper extends AppHelper {
 		return $element;
 	}
 
-
 /**
  * 言語inputラベル(切り替え)
  *
@@ -86,7 +86,7 @@ class SwitchLanguageHelper extends AppHelper {
 			$L10n = new L10n();
 			$catalog = $L10n->catalog($this->_View->viewVars['languages'][$languageId]);
 
-			$element .=  ' ' . __d('m17n', '(' . $catalog['language'] . ')');
+			$element .= ' ' . __d('m17n', '(' . $catalog['language'] . ')');
 		}
 
 		return $element;
