@@ -4,12 +4,12 @@
         <whitelist addUncoveredFilesFromWhitelist="true">
             <directory suffix=".ctp">app/Plugin/M17n</directory>
             <directory suffix=".php">app/Plugin/M17n</directory>
-			<exclude>
-				<directory suffix=".php">app/Plugin/M17n/Config/Migration</directory>
-				<directory suffix=".php">app/Plugin/M17n/Config/Schema</directory>
-				<directory suffix=".php">app/Plugin/M17n/Test/Case</directory>
-				<directory suffix=".php">app/Plugin/M17n/Test/Fixture</directory>
-			</exclude>
+            <exclude>
+                <directory suffix=".php">app/Plugin/M17n/Config/Migration</directory>
+                <directory suffix=".php">app/Plugin/M17n/Config/Schema</directory>
+                <directory suffix=".php">app/Plugin/M17n/Test/Case</directory>
+                <directory suffix=".php">app/Plugin/M17n/Test/Fixture</directory>
+            </exclude>
         </whitelist>
     </filter>
     <logging>
