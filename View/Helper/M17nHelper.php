@@ -63,7 +63,7 @@ class M17nHelper extends FormHelper {
  *
  * @var array
  */
-	private static $__countries = array(
+	public static $countries = array(
 		'af' => 'Afganistan',
 		'al' => 'Albania',
 		'dz' => 'Algeria',
@@ -310,7 +310,7 @@ class M17nHelper extends FormHelper {
  *
  * @var array
  */
-	private static $__languages = array(
+	public static $languages = array(
 		'ab' => 'Abkhazian',
 		'aa' => 'Afar',
 		'af' => 'Afrikaans',
@@ -671,7 +671,7 @@ class M17nHelper extends FormHelper {
 			'enable' => array('jp' => true, 'us' => true, 'cn' => true)
 		), $options);
 		$selected = $this->__getSelected($fieldName);
-		if ($selected === null || !array_key_exists($selected, self::$__countries)) {
+		if ($selected === null || !array_key_exists($selected, self::$countries)) {
 			if ($options['default']) {
 				$selected = $options['default'];
 			} else {
@@ -680,7 +680,7 @@ class M17nHelper extends FormHelper {
 		}
 		$opts = array();
 		//$enable = array('jp' => true, 'us' => true, 'cn' => true);
-		$opts['options'] = array_intersect_key(self::$__countries, $options['enable']);
+		$opts['options'] = array_intersect_key(self::$countries, $options['enable']);
 		$opts['options'] = array_map('__', $opts['options']);
 		$opts['selected'] = $selected;
 		$opts['multiple'] = false;
@@ -709,7 +709,7 @@ class M17nHelper extends FormHelper {
 			'enable' => array('ja' => true, 'en' => true, 'zh' => true)
 		), $options);
 		$selected = $this->__getSelected($fieldName);
-		if ($selected === null || !array_key_exists($selected, self::$__languages)) {
+		if ($selected === null || !array_key_exists($selected, self::$languages)) {
 			if ($options['default']) {
 				$selected = $options['default'];
 			} elseif (isset($this->request->query['language'])) {
@@ -721,7 +721,7 @@ class M17nHelper extends FormHelper {
 
 		$opts = array();
 		//$enable = array('ja' => true, 'en' => true, 'zh' => true);
-		$opts['options'] = array_intersect_key(self::$__languages, $options['enable']);
+		$opts['options'] = array_intersect_key(self::$languages, $options['enable']);
 		$opts['options'] = array_map('__', $opts['options']);
 		$opts['selected'] = $selected;
 		$opts['multiple'] = false;
