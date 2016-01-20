@@ -21,7 +21,8 @@
         "cakephp/cakephp":              "~2.7",
         "cakephp/debug_kit":            "~2.2",
         "components/jquery":            "~2.1",
-        "chronon/mobile_detect":        "*"
+        "chronon/mobile_detect":        "*",
+        "twbs/bootstrap":               "dev-master"
     },
     "require-dev": {
         "mustangostang/spyc":           "dev-master",
