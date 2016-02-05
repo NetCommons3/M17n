@@ -39,16 +39,16 @@ Only user w/ administrator role can edit this flag whether it\'s true or false.'
  * @var array
  */
 	public $records = array(
-		//array(
-		//	'id' => '1',
-		//	'code' => 'en',
-		//	'weight' => '1',
-		//	'is_active' => 1,
-		//	'created_user' => null,
-		//	'created' => '2014-07-03 05:00:39',
-		//	'modified_user' => null,
-		//	'modified' => '2014-07-03 05:00:39'
-		//),
+		array(
+			'id' => '1',
+			'code' => 'en',
+			'weight' => '1',
+			'is_active' => 1,
+			'created_user' => null,
+			'created' => '2014-07-03 05:00:39',
+			'modified_user' => null,
+			'modified' => '2014-07-03 05:00:39'
+		),
 		array(
 			'id' => '2',
 			'code' => 'ja',
