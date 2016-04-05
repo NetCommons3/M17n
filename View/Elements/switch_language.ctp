@@ -33,4 +33,3 @@ $L10n = new L10n();
 	<input type="hidden" name="active_lang_id" ng-value="activeLangId">
 	<?php $this->Form->unlockField('active_lang_id'); ?>
 </div>
-<br />
