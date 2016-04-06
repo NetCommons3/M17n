@@ -35,6 +35,8 @@ class SwitchLanguageHelper extends AppHelper {
  * @return string
  */
 	public function tablist($prefix = null) {
+		$this->NetCommonsHtml->css('/m17n/css/style.css');
+
 		return $this->_View->element('M17n.switch_language', array(
 			'prefix' => $prefix,
 			'languages' => $this->_View->viewVars['languages'],
