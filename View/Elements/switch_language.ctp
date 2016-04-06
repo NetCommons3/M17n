@@ -16,7 +16,7 @@ App::uses('L10n', 'I18n');
 $L10n = new L10n();
 ?>
 
-<div ng-init="activeLangId = '<?php echo h($activeLangId); ?>'">
+<div ng-init="activeLangId = '<?php echo h($activeLangId); ?>'" class="clearfix m17n-language-switch">
 	<ul class="nav nav-pills pull-right small" role="tablist">
 		<?php foreach ($languages as $langId => $langCode) : ?>
 			<li class="<?php echo ($activeLangId === (string)$langId ? 'active' : ''); ?>">
