@@ -96,8 +96,9 @@ class M17nBehavior extends OriginalKeyBehavior {
 	public function beforeSave(Model $model, $options = array()) {
 		parent::beforeSave($model, $options);
 
-		if (! $model->hasField('key') || ! $model->hasField('language_id') || ! isset($model->data[$model->alias]['key']) ||
-				$model->data[$model->alias]['key'] === '') {
+		if (! $model->hasField('key') || ! $model->hasField('language_id') ||
+				! isset($model->data[$model->alias]['key']) || $model->data[$model->alias]['key'] === '') {
+
 			return true;
 		}
 
@@ -257,7 +258,9 @@ class M17nBehavior extends OriginalKeyBehavior {
 		//frame_idのセット
 		if ($model->hasField('frame_id')) {
 			if (isset($target['Frame']['language_id'])) {
-				$data[$model->alias]['frame_id'] = Current::readM17n($target['Frame']['language_id'], 'Frame', 'id');
+				$data[$model->alias]['frame_id'] = Current::readM17n(
+					$target['Frame']['language_id'], 'Frame', 'id'
+				);
 			} elseif (isset($target[$model->alias]['frame_id'])) {
 				$data[$model->alias]['frame_id'] = $target[$model->alias]['frame_id'];
 			}
@@ -278,7 +281,9 @@ class M17nBehavior extends OriginalKeyBehavior {
 		//block_idのセット
 		if ($model->hasField('block_id')) {
 			if (isset($target['Block']['language_id'])) {
-				$data[$model->alias]['block_id'] = Current::readM17n($target['Block']['language_id'], 'Block', 'id');
+				$data[$model->alias]['block_id'] = Current::readM17n(
+					$target['Block']['language_id'], 'Block', 'id'
+				);
 			} elseif (isset($target[$model->alias]['block_id'])) {
 				$data[$model->alias]['block_id'] = $target[$model->alias]['block_id'];
 			}
