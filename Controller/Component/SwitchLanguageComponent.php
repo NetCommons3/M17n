@@ -56,8 +56,6 @@ class SwitchLanguageComponent extends Component {
 		} else {
 			$controller->set('activeLangId', Current::read('Language.id'));
 		}
-
-		$this->_setM17nRequestValue();
 	}
 
 /**
@@ -65,7 +63,7 @@ class SwitchLanguageComponent extends Component {
  *
  * @return void
  */
-	protected function _setM17nRequestValue() {
+	public function setM17nRequestValue() {
 		$controller = $this->controller;
 
 		if (! $controller->request->is(array('post', 'put'))) {
