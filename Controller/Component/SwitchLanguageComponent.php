@@ -20,6 +20,13 @@ App::uses('Component', 'Controller');
 class SwitchLanguageComponent extends Component {
 
 /**
+ * 多言語フィールド
+ *
+ * @var array
+ */
+	public $fields = array();
+
+/**
  * startup
  *
  * @param Controller $controller Controller
@@ -29,10 +36,10 @@ class SwitchLanguageComponent extends Component {
 		$this->controller = $controller;
 
 		//RequestActionの場合、スキップする
-		if (! empty($this->controller->request->params['requested'])) {
+		if (! empty($controller->request->params['requested'])) {
 			return;
 		}
-		$this->controller->helpers[] = 'M17n.SwitchLanguage';
+		$controller->helpers[] = 'M17n.SwitchLanguage';
 
 		//言語データ取得
 		$Language = ClassRegistry::init('M17n.Language');
@@ -42,12 +49,42 @@ class SwitchLanguageComponent extends Component {
 			'conditions' => array('is_active' => true),
 			'order' => 'weight'
 		));
-		$this->controller->set('languages', $languages);
+		$controller->set('languages', $languages);
 
-		if (isset($this->controller->data['active_language_id'])) {
-			$this->controller->set('activeLangId', $this->controller->data['active_language_id']);
+		if (isset($controller->data['active_language_id'])) {
+			$controller->set('activeLangId', $controller->data['active_language_id']);
 		} else {
-			$this->controller->set('activeLangId', Current::read('Language.id'));
+			$controller->set('activeLangId', Current::read('Language.id'));
+		}
+	}
+
+/**
+ * リクエスデータ内の多言語で未入力の場合、Current言語の入力されている内容をセットする
+ *
+ * @return void
+ */
+	public function setM17nRequestValue() {
+		$controller = $this->controller;
+
+		if (! $controller->request->is(array('post', 'put'))) {
+			return;
+		}
+
+		$langId = Current::read('Language.id');
+		foreach ($this->fields as $fieldName) {
+			list($model, $field) = pluginSplit($fieldName);
+
+			$value = Hash::get(
+				Hash::extract($controller->data, $model . '.{n}[language_id=' . $langId . '].' . $field), '0'
+			);
+
+			foreach ($controller->data[$model] as $i => $data) {
+				if ($data[$field]) {
+					continue;
+				}
+
+				$controller->request->data[$model][$i][$field] = $value;
+			}
 		}
 	}
 
