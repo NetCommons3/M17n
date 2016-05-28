@@ -79,7 +79,7 @@ class SwitchLanguageComponent extends Component {
 			);
 
 			foreach ($controller->data[$model] as $i => $data) {
-				if ($data[$field]) {
+				if (Hash::get($data, $field)) {
 					continue;
 				}
 
