@@ -88,7 +88,9 @@ class SwitchLanguageHelper extends AppHelper {
 			$L10n = new L10n();
 			$catalog = $L10n->catalog($this->_View->viewVars['languages'][$languageId]);
 
-			$element .= ' ' . __d('m17n', '(' . $catalog['language'] . ')');
+			$element .= ' <span class="text-nowrap">' .
+							__d('m17n', '(' . $catalog['language'] . ')') .
+						'</span>';
 		}
 
 		return $element;
