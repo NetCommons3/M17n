@@ -664,7 +664,7 @@ class M17nHelper extends FormHelper {
  */
 	public function countries($fieldName, $options = array()) {
 		$options = array_merge(array(
-			'label' => __('Country', true),
+			'label' => __d('m17n', 'Country'),
 			'default' => null,
 			'class' => null,
 			'div' => null,
@@ -702,7 +702,7 @@ class M17nHelper extends FormHelper {
  */
 	public function languages($fieldName, $options = array()) {
 		$options = array_merge(array(
-			'label' => __('Language', true),
+			'label' => __d('m17n', 'Language'),
 			'default' => null,
 			'class' => null,
 			'div' => null,
