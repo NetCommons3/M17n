@@ -24,7 +24,7 @@ $L10n = new L10n();
 					ng-click="activeLangId = '<?php echo $langId; ?>'">
 
 					<?php $catalog = $L10n->catalog($langCode);
-							echo __($catalog['language']); ?>
+							echo __d('m17n', $catalog['language']); ?>
 				</a>
 			</li>
 		<?php endforeach; ?>
