@@ -15,10 +15,19 @@
 msgid "(Japanese)"
 msgstr "【日本語】"
 
+msgid "(ja)"
+msgstr "【日本語】"
+
 msgid "(English)"
 msgstr "【英語】"
 
+msgid "(en)"
+msgstr "【英語】"
+
 msgid "(Chinese)"
+msgstr "【中国語】"
+
+msgid "(ch)"
 msgstr "【中国語】"
 
 msgid "Japanese"
