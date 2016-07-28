@@ -45,13 +45,13 @@ class Records extends NetCommonsMigration {
 			array(
 				'id' => '1',
 				'code' => 'en',
-				'weight' => '1',
+				'weight' => '2',
 				'is_active' => true,
 			),
 			array(
 				'id' => '2',
 				'code' => 'ja',
-				'weight' => '2',
+				'weight' => '1',
 				'is_active' => true,
 			),
 		),
