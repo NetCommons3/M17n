@@ -78,6 +78,10 @@ class SwitchLanguageComponent extends Component {
 				Hash::extract($controller->data, $model . '.{n}[language_id=' . $langId . '].' . $field), '0'
 			);
 
+			if (! isset($controller->data[$model])) {
+				continue;
+			}
+
 			foreach ($controller->data[$model] as $i => $data) {
 				if (Hash::get($data, $field)) {
 					continue;
