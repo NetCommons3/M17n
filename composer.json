@@ -18,7 +18,7 @@
     },
     "require": {
         "cakedc/migrations":            "~2.2",
-        "netcommons/net-commons":       "dev-master"
+        "netcommons/net-commons":       "@dev"
     },
     "config": {
         "vendor-dir": "vendors",
