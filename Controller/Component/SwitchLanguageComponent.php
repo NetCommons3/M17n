@@ -43,12 +43,7 @@ class SwitchLanguageComponent extends Component {
 
 		//言語データ取得
 		$Language = ClassRegistry::init('M17n.Language');
-		$languages = $Language->find('list', array(
-			'recursive' => -1,
-			'fields' => array('id', 'code'),
-			'conditions' => array('is_active' => true),
-			'order' => 'weight'
-		));
+		$languages = $Language->getLanguage('list');
 		$controller->set('languages', $languages);
 
 		if (isset($controller->data['active_language_id'])) {
