@@ -9,7 +9,7 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('AppModel', 'Model');
+App::uses('M17nAppModel', 'M17n.Model');
 
 /**
  * Language Model
@@ -17,7 +17,7 @@ App::uses('AppModel', 'Model');
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Model
  */
-class Language extends AppModel {
+class Language extends M17nAppModel {
 
 /**
  * Validation rules
@@ -25,6 +25,13 @@ class Language extends AppModel {
  * @var array
  */
 	public $validate = array();
+
+/**
+ * 言語データ
+ *
+ * @var array
+ */
+	public static $languages = array();
 
 /**
  * Called during validation operations, before validation. Please note that custom
@@ -61,13 +68,20 @@ class Language extends AppModel {
 	}
 
 /**
- * 言語データタイプを取得
+ * 言語データを取得
  *
  * @param string $type 取得タイプ
  * @param array $options 取得オプション
  * @return array 言語データ
  */
-	public function getLanguage($type = 'all', $options = array()) {
+	public function getLanguage($type = null, $options = array()) {
+		if (! $type && ! $options) {
+			return $this->getLanguages();
+		}
+		if (! $type) {
+			$type = 'all';
+		}
+
 		if ($type === 'list' && ! isset($options['fields'])) {
 			$options['fields'] = array('id', 'code');
 		}
@@ -80,6 +94,27 @@ class Language extends AppModel {
 			'order' => array('weight' => 'asc')
 		), $options));
 		return $languages;
+	}
+
+/**
+ * 言語データを取得
+ *
+ * @return array
+ */
+	public function getLanguages() {
+		if (self::$languages) {
+			return self::$languages;
+		}
+
+		self::$languages = $this->find('all', array(
+			'recursive' => -1,
+			'conditions' => array(
+				'is_active' => true
+			),
+			'order' => array('weight' => 'asc')
+		));
+
+		return self::$languages;
 	}
 
 }
