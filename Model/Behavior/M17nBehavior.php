@@ -194,7 +194,7 @@ class M17nBehavior extends OriginalKeyBehavior {
 	//			}
 	//			if ($model->hasField('block_id')) {
 	//				$options['Block']['id'] = Current::readM17n($language['Language']['id'], 'Block', 'id');
-	//				$options['Block']['language_id'] = $language['Language']['id'];
+	//				$options['BlocksLanguage']['language_id'] = $language['Language']['id'];
 	//			}
 	//			$this->__target[] = $model->createAll($options);
 	//		}
@@ -280,9 +280,9 @@ class M17nBehavior extends OriginalKeyBehavior {
 	//private function __getBlockId(Model $model, $data, $target) {
 	//	//block_idのセット
 	//	if ($model->hasField('block_id')) {
-	//		if (isset($target['Block']['language_id'])) {
+	//		if (isset($target['BlocksLanguage']['language_id'])) {
 	//			$data[$model->alias]['block_id'] = Current::readM17n(
-	//				$target['Block']['language_id'], 'Block', 'id'
+	//				$target['BlocksLanguage']['language_id'], 'Block', 'id'
 	//			);
 	//		} elseif (isset($target[$model->alias]['block_id'])) {
 	//			$data[$model->alias]['block_id'] = $target[$model->alias]['block_id'];
