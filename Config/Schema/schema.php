@@ -53,9 +53,8 @@ class M17nSchema extends CakeSchema {
 	public $languages = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 6, 'unsigned' => false, 'key' => 'primary'),
 		'code' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 2, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'weight' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => 'Display order.'),
-		'is_active' => array('type' => 'boolean', 'null' => true, 'default' => null, 'key' => 'index', 'comment' => 'Visible from user or not.
-Only user w/ administrator role can edit this flag whether it\'s true or false.'),
+		'weight' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => '順序'),
+		'is_active' => array('type' => 'boolean', 'null' => true, 'default' => null, 'key' => 'index', 'comment' => 'アクティブフラグ 1:アクティブ、0:非アクティブ'),
 		'created_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'modified_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
