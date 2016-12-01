@@ -635,9 +635,15 @@ class M17nHelper extends FormHelper {
 		if (empty($this->request->data)) {
 			return null;
 		}
-		$view =& ClassRegistry::getObject('view');
-		$this->setEntity($fieldName);
-		$ent = $view->entity();
+		try {
+			$view = ClassRegistry::getObject('view');
+			$this->setEntity($fieldName);
+			if ($view) {
+				$ent = $view->entity();
+			}
+		} catch (Exception $ex) {
+
+		}
 		if (empty($ent)) {
 			return null;
 		}
@@ -701,6 +707,12 @@ class M17nHelper extends FormHelper {
  * @return string
  */
 	public function languages($fieldName, $options = array()) {
+		if (! isset($options['enable']) && Configure::read('NetCommons.installed')) {
+			$options['enable'] = array_flip(
+				Hash::extract($this->_View->viewVars['languages'], '{n}.Language.code')
+			);
+		}
+
 		$options = array_merge(array(
 			'label' => __d('m17n', 'Language'),
 			'default' => null,
@@ -719,10 +731,14 @@ class M17nHelper extends FormHelper {
 			}
 		}
 
-		$opts = array();
+		$opts = $options;
+		unset($opts['enable']);
+
 		//$enable = array('ja' => true, 'en' => true, 'zh' => true);
 		$opts['options'] = array_intersect_key(self::$languages, $options['enable']);
-		$opts['options'] = array_map('__', $opts['options']);
+		$opts['options'] = array_map(function ($value) {
+			return __d('m17n', $value);
+		}, $opts['options']);
 		$opts['selected'] = $selected;
 		$opts['multiple'] = false;
 		$opts['label'] = $options['label'];
