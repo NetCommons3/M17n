@@ -737,7 +737,7 @@ class M17nHelper extends FormHelper {
 		//$enable = array('ja' => true, 'en' => true, 'zh' => true);
 		$opts['options'] = array_intersect_key(self::$languages, $options['enable']);
 		$opts['options'] = array_map(function ($value) {
-			return __d('m17n', $value);
+			return __d('m17n', '%s', $value);
 		}, $opts['options']);
 		$opts['selected'] = $selected;
 		$opts['multiple'] = false;

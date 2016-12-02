@@ -62,7 +62,7 @@ class SwitchLanguageHelper extends AppHelper {
 			$catalog = $L10n->catalog($code);
 
 			$element .= $this->NetCommonsHtml->div($classOptions,
-				h($name) . ' ' . __d('m17n', '(' . $catalog['language'] . ')'),
+				h($name) . ' ' . __d('m17n', '(%s)', $catalog['language']),
 				Hash::merge(array(
 					'ng-show' => 'activeLangId === \'' . $id . '\'',
 					'ng-cloak' => 'true',
