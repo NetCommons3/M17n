@@ -707,12 +707,6 @@ class M17nHelper extends FormHelper {
  * @return string
  */
 	public function languages($fieldName, $options = array()) {
-		if (! isset($options['enable']) && Configure::read('NetCommons.installed')) {
-			$options['enable'] = array_flip(
-				Hash::extract($this->_View->viewVars['languages'], '{n}.Language.code')
-			);
-		}
-
 		$options = array_merge(array(
 			'label' => __d('m17n', 'Language'),
 			'default' => null,

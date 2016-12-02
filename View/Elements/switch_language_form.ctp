@@ -13,7 +13,7 @@
  */
 ?>
 
-<?php echo $this->NetCommonsForm->create(null,
+<?php echo $this->NetCommonsForm->create(false,
 	array(
 		'type' => 'get',
 		'url' => NetCommonsUrl::actionUrl(array('plugin' => 'm17n', 'controller' => 'm17n', 'action' => 'index')),
@@ -24,7 +24,10 @@
 		array(
 			'label' => false,
 			'default' => Configure::read('Config.language'),
-			'onchange' => 'submit()'
+			'onchange' => 'submit()',
+			'enable' => array_flip(
+				Hash::extract($switchLanguages, '{n}.Language.code')
+			),
 		)
 	); ?>
 
