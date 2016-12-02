@@ -1,0 +1,54 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: DataTypes/Model/DataType.php:189
+#: M17n/View/Elements/switch_language.ctp:27
+#: M17n/View/Helper/M17nHelper.php:740
+msgid "Japanese"
+msgstr ""
+
+msgid "English"
+msgstr ""
+
+msgid "Chinese"
+msgstr ""
+
+#: M17n/View/Helper/M17nHelper.php:673
+msgid "Country"
+msgstr ""
+
+#: M17n/View/Helper/M17nHelper.php:717
+msgid "Language"
+msgstr ""
+
+#: M17n/View/Helper/SwitchLanguageHelper.php:65;92
+msgid "(Japanese)"
+msgstr ""
+
+msgid "(English)"
+msgstr ""
+
+msgid "(Chinese)"
+msgstr ""
+
+#: Users/Model/Behavior/ImportExportBehavior.php:413
+msgid "(ja)"
+msgstr ""
+
+msgid "(en)"
+msgstr ""
+
+msgid "(ch)"
+msgstr ""
