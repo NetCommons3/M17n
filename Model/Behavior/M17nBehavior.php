@@ -30,7 +30,8 @@ App::uses('ModelBehavior', 'Model');
  * ```
  * public $actsAs = array(
  * 	'M17n.M17n' => array(
- * 		'key_field' => 'key' //デフォルト"key"
+ * 		'keyField' => 'key', //デフォルト"key"
+ *		'allUpdateField' => array('category_id'), //このフィールドが更新された場合、全言語のデータを更新する
  * 	),
  * ```
  *
@@ -48,7 +49,8 @@ class M17nBehavior extends ModelBehavior {
  */
 	public function setup(Model $model, $config = array()) {
 		parent::setup($model, $config);
-		$this->settings[$model->name]['key_field'] = Hash::get($config, 'key_field', 'key');
+		$this->settings[$model->name]['keyField'] = Hash::get($config, 'keyField', 'key');
+		$this->settings[$model->name]['allUpdateField'] = Hash::get($config, 'allUpdateField', array());
 
 		//ビヘイビアの優先順位
 		$this->settings['priority'] = 8;
@@ -61,7 +63,7 @@ class M17nBehavior extends ModelBehavior {
  * @return bool
  */
 	protected function _hasM17nFields(Model $model) {
-		$keyField = $this->settings[$model->name]['key_field'];
+		$keyField = $this->settings[$model->name]['keyField'];
 
 		$fields = array(
 			$keyField, 'language_id', 'is_origin', 'is_translation',
@@ -118,7 +120,7 @@ class M17nBehavior extends ModelBehavior {
 			return true;
 		}
 
-		$keyField = $this->settings[$model->name]['key_field'];
+		$keyField = $this->settings[$model->name]['keyField'];
 
 		//チェックするためのWHERE条件
 		if ($this->_hasWorkflowFields($model)) {
@@ -182,7 +184,9 @@ class M17nBehavior extends ModelBehavior {
 		} else {
 			$model->data[$model->alias]['is_origin'] = false;
 			$model->data[$model->alias] = Hash::remove($model->data[$model->alias], 'id');
+			$model->id = null;
 		}
+
 		return parent::beforeSave($model, $options);
 	}
 
@@ -201,11 +205,8 @@ class M17nBehavior extends ModelBehavior {
 			return true;
 		}
 
-		$keyField = $this->settings[$model->name]['key_field'];
+		$keyField = $this->settings[$model->name]['keyField'];
 
-		$update = array(
-			'is_translation' => true,
-		);
 		if ($this->_hasWorkflowFields($model)) {
 			$conditions = array(
 				$model->alias . '.' . $keyField => $model->data[$model->alias][$keyField],
@@ -221,10 +222,94 @@ class M17nBehavior extends ModelBehavior {
 			);
 		}
 
+		//is_translationの更新
+		$this->_updateTranslationField($model, $conditions);
+
+		//全言語をコピーする処理
+		$conditions[$model->alias . '.' . 'is_translation'] = true;
+		$this->_copyData($model, $conditions);
+
+		return parent::afterSave($model, $created, $options);
+	}
+
+/**
+ * is_translationの更新
+ *
+ * @param Model $model 呼び出し元Model
+ * @param array $conditions 更新条件
+ * @return bool
+ * @throws InternalErrorException
+ */
+	protected function _updateTranslationField(Model $model, $conditions) {
+		$update = array(
+			'is_translation' => true,
+		);
+
 		if (! $model->updateAll($update, $conditions)) {
 			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 		}
 
-		return parent::afterSave($model, $created, $options);
+		return true;
 	}
+
+/**
+ * 全言語をコピーする処理
+ *
+ * @param Model $model 呼び出し元Model
+ * @param array $conditions 更新条件
+ * @return bool
+ */
+	protected function _copyData(Model $model, $conditions) {
+		//全言語をコピーするフィールドがない場合、処理終了
+		if (! $this->settings[$model->name]['allUpdateField']) {
+			return true;
+		}
+
+		$orgData = $model->data;
+		$orgId = $model->id;
+
+		//コピー元のデータ取得
+		$defaultUpdate = array();
+		$copyConditions = $conditions;
+		foreach ($this->settings[$model->name]['allUpdateField'] as $field) {
+			$fieldValue = Hash::get($model->data[$model->alias], $field);
+
+			$copyConditions['OR'][$model->alias . '.' . $field . ' !='] = $fieldValue;
+			$defaultUpdate[$model->alias][$field] = $fieldValue;
+		}
+		$results = $model->find('all', array(
+			'recursive' => -1,
+			'conditions' => $copyConditions,
+		));
+
+		//ワークフローのデータであれば、is_activeとis_latestのフラグを更新する
+		if ($this->_hasWorkflowFields($model)) {
+			$update = array(
+				'is_active' => false,
+				'is_latest' => false,
+			);
+			if (! $model->updateAll($update, $conditions)) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			}
+		}
+
+		//データのコピー処理
+		foreach ($results as $data) {
+			if ($this->_hasWorkflowFields($model)) {
+				unset($data[$model->alias]['id']);
+				$model->create(false);
+			}
+
+			$update = Hash::merge($data, $defaultUpdate);
+			if (! $model->save($update, ['validate' => false, 'callbacks' => false])) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			}
+		}
+
+		$model->data = $orgData;
+		$model->id = $orgId;
+
+		return true;
+	}
+
 }
