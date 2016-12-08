@@ -32,6 +32,12 @@ App::uses('ModelBehavior', 'Model');
  * 	'M17n.M17n' => array(
  * 		'keyField' => 'key', //デフォルト"key"
  *		'allUpdateField' => array('category_id'), //このフィールドが更新された場合、全言語のデータを更新する
+ *		'associations' => array(
+ *			'(Model名)' => array(
+ *				'class' => (クラス名: Plugin.Model形式),
+ *				'foreignKey' => (外部キー),
+ *			)
+ *		),
  * 	),
  * ```
  *
@@ -51,6 +57,7 @@ class M17nBehavior extends ModelBehavior {
 		parent::setup($model, $config);
 		$this->settings[$model->name]['keyField'] = Hash::get($config, 'keyField', 'key');
 		$this->settings[$model->name]['allUpdateField'] = Hash::get($config, 'allUpdateField', array());
+		$this->settings[$model->name]['associations'] = Hash::get($config, 'associations', array());
 
 		//ビヘイビアの優先順位
 		$this->settings['priority'] = 8;
@@ -282,32 +289,91 @@ class M17nBehavior extends ModelBehavior {
 			'conditions' => $copyConditions,
 		));
 
-		//ワークフローのデータであれば、is_activeとis_latestのフラグを更新する
-		if ($this->_hasWorkflowFields($model)) {
-			$update = array(
-				'is_active' => false,
-				'is_latest' => false,
-			);
-			if (! $model->updateAll($update, $conditions)) {
-				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
-			}
-		}
-
 		//データのコピー処理
 		foreach ($results as $data) {
+			//ワークフローのデータであれば、is_activeとis_latestのフラグを更新する
+			if (! $this->_updateWorkflowFields($model, $data)) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			}
+
+			//ワークフローのデータであれば、新規にデータを生成する
 			if ($this->_hasWorkflowFields($model)) {
 				unset($data[$model->alias]['id']);
 				$model->create(false);
 			}
 
 			$update = Hash::merge($data, $defaultUpdate);
-			if (! $model->save($update, ['validate' => false, 'callbacks' => false])) {
+			$newData = $model->save($update, ['validate' => false, 'callbacks' => false]);
+			if (! $newData) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			}
+
+			//ワークフローのデータでコピーする場合で、関連テーブルを更新する
+			if (! $this->_updateWorkflowAssociations($model, $newData[$model->alias]['id'], $orgId)) {
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
 		}
 
 		$model->data = $orgData;
 		$model->id = $orgId;
+
+		return true;
+	}
+
+/**
+ * ワークフローのデータであれば、is_activeとis_latestのフラグを更新する
+ *
+ * @param Model $model 呼び出し元Model
+ * @param array $data 更新データ
+ * @return bool
+ */
+	protected function _updateWorkflowFields(Model $model, $data) {
+		if (! $this->_hasWorkflowFields($model)) {
+			return true;
+		}
+
+		$update = array(
+			'is_active' => false,
+			'is_latest' => false,
+		);
+		$conditions = array(
+			$model->alias . '.id' => $data[$model->alias]['id']
+		);
+		return $model->updateAll($update, $conditions);
+	}
+
+/**
+ * ワークフローのデータでコピーする場合で、関連テーブルを更新する
+ * e.g) タスクプラグインなど
+ *
+ * @param Model $model 呼び出し元Model
+ * @param array $newId 更新するID
+ * @param array $orgId 更新元ID
+ * @return bool
+ */
+	protected function _updateWorkflowAssociations(Model $model, $newId, $orgId) {
+		if (! $this->settings[$model->name]['associations']) {
+			return true;
+		}
+		if (! $this->_hasWorkflowFields($model)) {
+			return true;
+		}
+
+		foreach ($this->settings[$model->name]['associations'] as $modelName => $modelData) {
+			$model->loadModels([$modelName => $modelData['class']]);
+
+			$schema = $model->$modelName->schema();
+			unset($schema['id']);
+			$schemaColumns = implode(', ', array_keys($schema));
+
+			$tableName = $model->$modelName->tablePrefix . $model->$modelName->table;
+
+			$sql = 'INSERT INTO ' . $tableName . '(' . $schemaColumns . ')' .
+					' SELECT ' . preg_replace('/' . $modelData['foreignKey'] . '/', $newId, $schemaColumns) .
+					' FROM ' . $tableName .
+					' WHERE ' . $modelData['foreignKey'] . ' = ' . $orgId;
+			$model->$modelName->query($sql);
+		}
 
 		return true;
 	}
