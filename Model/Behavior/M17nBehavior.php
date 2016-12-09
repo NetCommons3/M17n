@@ -372,6 +372,9 @@ class M17nBehavior extends ModelBehavior {
 					' SELECT ' . preg_replace('/' . $modelData['foreignKey'] . '/', $newId, $schemaColumns) .
 					' FROM ' . $tableName .
 					' WHERE ' . $modelData['foreignKey'] . ' = ' . $orgId;
+			if ($model->$modelName->hasField('plugin_key')) {
+				$sql .= ' AND plugin_key = \'' . Inflector::underscore($model->plugin) . '\'';
+			}
 			$model->$modelName->query($sql);
 		}
 
