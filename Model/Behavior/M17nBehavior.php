@@ -36,6 +36,7 @@ App::uses('ModelBehavior', 'Model');
  *			'(Model名)' => array(
  *				'class' => (クラス名: Plugin.Model形式),
  *				'foreignKey' => (外部キー),
+ *				'isM17n' => 多言語ありかどうか,
  *			)
  *		),
  * 	),
@@ -291,6 +292,8 @@ class M17nBehavior extends ModelBehavior {
 
 		//データのコピー処理
 		foreach ($results as $data) {
+			$copyOrgId = $data[$model->alias]['id'];
+
 			//ワークフローのデータであれば、is_activeとis_latestのフラグを更新する
 			if (! $this->_updateWorkflowFields($model, $data)) {
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
@@ -309,7 +312,8 @@ class M17nBehavior extends ModelBehavior {
 			}
 
 			//ワークフローのデータでコピーする場合で、関連テーブルを更新する
-			if (! $this->_updateWorkflowAssociations($model, $newData[$model->alias]['id'], $orgId)) {
+			$newId = $newData[$model->alias]['id'];
+			if (! $this->_updateWorkflowAssociations($model, $newId, $orgId, $copyOrgId)) {
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
 		}
@@ -348,10 +352,11 @@ class M17nBehavior extends ModelBehavior {
  *
  * @param Model $model 呼び出し元Model
  * @param array $newId 更新するID
- * @param array $orgId 更新元ID
+ * @param array $orgId 更新元(m17nなし)ID
+ * @param array $copyOrgId 更新元(m17nあり)ID
  * @return bool
  */
-	protected function _updateWorkflowAssociations(Model $model, $newId, $orgId) {
+	protected function _updateWorkflowAssociations(Model $model, $newId, $orgId, $copyOrgId) {
 		if (! $this->settings[$model->name]['associations']) {
 			return true;
 		}
@@ -368,10 +373,15 @@ class M17nBehavior extends ModelBehavior {
 
 			$tableName = $model->$modelName->tablePrefix . $model->$modelName->table;
 
+			if (Hash::get($modelData, 'isM17n')) {
+				$id = $copyOrgId;
+			} else {
+				$id = $orgId;
+			}
 			$sql = 'INSERT INTO ' . $tableName . '(' . $schemaColumns . ')' .
 					' SELECT ' . preg_replace('/' . $modelData['foreignKey'] . '/', $newId, $schemaColumns) .
 					' FROM ' . $tableName .
-					' WHERE ' . $modelData['foreignKey'] . ' = ' . $orgId;
+					' WHERE ' . $modelData['foreignKey'] . ' = ' . $id;
 			if ($model->$modelName->hasField('plugin_key')) {
 				$sql .= ' AND plugin_key = \'' . Inflector::underscore($model->plugin) . '\'';
 			}
