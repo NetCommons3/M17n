@@ -32,6 +32,7 @@ App::uses('ModelBehavior', 'Model');
  * 	'M17n.M17n' => array(
  * 		'keyField' => 'key', //デフォルト"key"
  *		'allUpdateField' => array('category_id'), //このフィールドが更新された場合、全言語のデータを更新する
+ *		'allUpdateFieldConditions' => array(),
  *		'associations' => array(
  *			'(Model名)' => array(
  *				'class' => (クラス名: Plugin.Model形式),
@@ -287,7 +288,10 @@ class M17nBehavior extends ModelBehavior {
 		}
 		$results = $model->find('all', array(
 			'recursive' => -1,
-			'conditions' => $copyConditions,
+			'conditions' => Hash::merge(
+				$copyConditions,
+				Hash::get($this->settings[$model->name], 'allUpdateFieldConditions', array())
+			),
 		));
 
 		//データのコピー処理
