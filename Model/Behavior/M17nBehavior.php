@@ -280,11 +280,13 @@ class M17nBehavior extends ModelBehavior {
 		//コピー元のデータ取得
 		$defaultUpdate = array();
 		$copyConditions = $conditions;
-		foreach ($this->settings[$model->name]['allUpdateField'] as $field) {
-			$fieldValue = Hash::get($model->data[$model->alias], $field);
+		if (is_array($this->settings[$model->name]['allUpdateField'])) {
+			foreach ($this->settings[$model->name]['allUpdateField'] as $field) {
+				$fieldValue = Hash::get($model->data[$model->alias], $field);
 
-			$copyConditions['OR'][$model->alias . '.' . $field . ' !='] = $fieldValue;
-			$defaultUpdate[$model->alias][$field] = $fieldValue;
+				$copyConditions['OR'][$model->alias . '.' . $field . ' !='] = $fieldValue;
+				$defaultUpdate[$model->alias][$field] = $fieldValue;
+			}
 		}
 		$results = $model->find('all', array(
 			'recursive' => -1,
