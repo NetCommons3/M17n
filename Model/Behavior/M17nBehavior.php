@@ -130,6 +130,9 @@ class M17nBehavior extends ModelBehavior {
 		}
 
 		$keyField = $this->settings[$model->name]['keyField'];
+		if (! $keyField) {
+			return true;
+		}
 
 		//チェックするためのWHERE条件
 		if ($this->_hasWorkflowFields($model)) {
@@ -215,6 +218,9 @@ class M17nBehavior extends ModelBehavior {
 		}
 
 		$keyField = $this->settings[$model->name]['keyField'];
+		if (! $keyField) {
+			return true;
+		}
 
 		if ($this->_hasWorkflowFields($model)) {
 			$conditions = array(
