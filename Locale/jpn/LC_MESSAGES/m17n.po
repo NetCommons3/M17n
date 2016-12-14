@@ -12,29 +12,52 @@
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "X-Generator: Poedit 1.7.5\n"
 
-msgid "(Japanese)"
-msgstr "【日本語】"
-
-msgid "(ja)"
-msgstr "【日本語】"
-
-msgid "(English)"
-msgstr "【英語】"
-
-msgid "(en)"
-msgstr "【英語】"
-
-msgid "(Chinese)"
-msgstr "【中国語】"
-
-msgid "(ch)"
-msgstr "【中国語】"
-
+#: DataTypes/Model/DataType.php:189
+#: M17n/View/Elements/switch_language.ctp:27
+#: M17n/View/Helper/M17nHelper.php:740
 msgid "Japanese"
 msgstr "日本語"
 
+#: DataTypes/Model/DataType.php:189
+#: M17n/View/Elements/switch_language.ctp:27
+#: M17n/View/Helper/M17nHelper.php:740
 msgid "English"
 msgstr "英語"
 
+#: DataTypes/Model/DataType.php:189
+#: M17n/View/Elements/switch_language.ctp:27
+#: M17n/View/Helper/M17nHelper.php:740
 msgid "Chinese"
 msgstr "中国語"
+
+#: M17n/View/Helper/M17nHelper.php:673
+msgid "Country"
+msgstr ""
+
+#: M17n/View/Helper/M17nHelper.php:717
+msgid "Language"
+msgstr ""
+
+#: M17n/View/Helper/SwitchLanguageHelper.php:65;92
+msgid "(Japanese)"
+msgstr "【日本語】"
+
+#: M17n/View/Helper/SwitchLanguageHelper.php:65;92
+msgid "(English)"
+msgstr "【英語】"
+
+#: M17n/View/Helper/SwitchLanguageHelper.php:65;92
+msgid "(Chinese)"
+msgstr "【中国語】"
+
+#: Users/Model/Behavior/ImportExportBehavior.php:413
+msgid "(ja)"
+msgstr "【日本語】"
+
+#: Users/Model/Behavior/ImportExportBehavior.php:413
+msgid "(en)"
+msgstr "【英語】"
+
+#: Users/Model/Behavior/ImportExportBehavior.php:413
+msgid "(ch)"
+msgstr "【中国語】"
