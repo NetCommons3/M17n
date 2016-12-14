@@ -31,8 +31,7 @@ App::uses('ModelBehavior', 'Model');
  * public $actsAs = array(
  * 	'M17n.M17n' => array(
  * 		'keyField' => 'key', //デフォルト"key"
- *		'allUpdateField' => array('category_id'), //このフィールドが更新された場合、全言語のデータを更新する
- *		'allUpdateFieldConditions' => array(),
+ *		'commonFields' => array('category_id'), //このフィールドが更新された場合、全言語のデータを更新する
  *		'associations' => array(
  *			'(Model名)' => array(
  *				'class' => (クラス名: Plugin.Model形式),
@@ -40,6 +39,8 @@ App::uses('ModelBehavior', 'Model');
  *				'isM17n' => 多言語ありかどうか,
  *			)
  *		),
+ *		'afterCallback' => afterSaveを実行するかどうか,
+ *		'isWorkflow' => ワークフローかどうか。省略もしくはNULLの場合、
  * 	),
  * ```
  *
@@ -58,8 +59,12 @@ class M17nBehavior extends ModelBehavior {
 	public function setup(Model $model, $config = array()) {
 		parent::setup($model, $config);
 		$this->settings[$model->name]['keyField'] = Hash::get($config, 'keyField', 'key');
-		$this->settings[$model->name]['allUpdateField'] = Hash::get($config, 'allUpdateField', array());
+		$this->settings[$model->name]['commonFields'] = Hash::get($config, 'commonFields', array());
 		$this->settings[$model->name]['associations'] = Hash::get($config, 'associations', array());
+		$this->settings[$model->name]['afterCallback'] = Hash::get($config, 'afterCallback', true);
+		$this->settings[$model->name]['isWorkflow'] = Hash::get(
+			$config, 'isWorkflow', $this->_hasWorkflowFields($model)
+		);
 
 		//ビヘイビアの優先順位
 		$this->settings['priority'] = 8;
@@ -160,6 +165,7 @@ class M17nBehavior extends ModelBehavior {
 		//データが1件もないことを確認する
 		$count = $model->find('count', array(
 			'recursive' => -1,
+			'callbacks' => false,
 			'conditions' => array(
 				$keyField => $model->data[$model->alias][$keyField]
 			),
@@ -177,6 +183,7 @@ class M17nBehavior extends ModelBehavior {
 		//翻訳データのチェック
 		$count = $model->find('count', array(
 			'recursive' => -1,
+			'callbacks' => false,
 			'conditions' => $transConditions,
 		));
 		if ($count > 0) {
@@ -188,6 +195,7 @@ class M17nBehavior extends ModelBehavior {
 		//当言語のデータのチェック
 		$data = $model->find('first', array(
 			'fields' => array('language_id', 'is_origin', 'is_translation'),
+			'callbacks' => false,
 			'recursive' => -1,
 			'conditions' => $ownLangConditions,
 		));
@@ -214,12 +222,48 @@ class M17nBehavior extends ModelBehavior {
  */
 	public function afterSave(Model $model, $created, $options = array()) {
 		if (! $this->_hasM17nFields($model)) {
-			return true;
+			return parent::afterSave($model, $created, $options);
 		}
 
+		$conditions = $this->_getSaveConditions($model);
+		if (! $conditions) {
+			return parent::afterSave($model, $created, $options);
+		}
+
+		//is_translationの更新
+		$this->updateTranslationField($model);
+
+		//多言語化の処理
+		if (! $this->settings[$model->name]['afterCallback']) {
+			return parent::afterSave($model, $created, $options);
+		}
+
+		$newOrgData = $model->data;
+		$newOrgId = $model->id;
+
+		$this->saveM17nData($model);
+
+		$model->data = $newOrgData;
+		$model->id = $newOrgId;
+
+		return parent::afterSave($model, $created, $options);
+	}
+
+
+/**
+ * afterSave is called after a model is saved.
+ *
+ * @param Model $model Model using this behavior
+ * @param bool $created True if this save created a new record
+ * @param array $options Options passed from Model::save().
+ * @return bool
+ * @throws InternalErrorException
+ * @see Model::save()
+ */
+	protected function _getSaveConditions(Model $model) {
 		$keyField = $this->settings[$model->name]['keyField'];
 		if (! $keyField) {
-			return true;
+			return false;
 		}
 
 		if ($this->_hasWorkflowFields($model)) {
@@ -229,33 +273,31 @@ class M17nBehavior extends ModelBehavior {
 				$model->alias . '.' . 'is_translation' => false,
 				$model->alias . '.' . 'is_latest' => true
 			);
-		} else {
+		} elseif ($this->_hasM17nFields($model)) {
 			$conditions = array(
 				$model->alias . '.' . $keyField => $model->data[$model->alias][$keyField],
 				$model->alias . '.' . 'language_id !=' => Current::read('Language.id'),
 				$model->alias . '.' . 'is_translation' => false,
 			);
+		} else {
+			$conditions = array(
+				$model->alias . '.' . $keyField => $model->data[$model->alias][$keyField],
+			);
 		}
 
-		//is_translationの更新
-		$this->_updateTranslationField($model, $conditions);
-
-		//全言語をコピーする処理
-		$conditions[$model->alias . '.' . 'is_translation'] = true;
-		$this->_copyData($model, $conditions);
-
-		return parent::afterSave($model, $created, $options);
+		return $conditions;
 	}
 
 /**
  * is_translationの更新
  *
  * @param Model $model 呼び出し元Model
- * @param array $conditions 更新条件
  * @return bool
  * @throws InternalErrorException
  */
-	protected function _updateTranslationField(Model $model, $conditions) {
+	public function updateTranslationField(Model $model) {
+		$conditions = $this->_getSaveConditions($model);
+
 		$update = array(
 			'is_translation' => true,
 		);
@@ -271,67 +313,127 @@ class M17nBehavior extends ModelBehavior {
  * 全言語をコピーする処理
  *
  * @param Model $model 呼び出し元Model
- * @param array $conditions 更新条件
+ * @param array|null $commonFields 共通フィールド
+ * @param array|null $associations 関連情報
  * @return bool
  */
-	protected function _copyData(Model $model, $conditions) {
+	public function saveM17nData(Model $model, $commonFields = null, $associations = null) {
 		//全言語をコピーするフィールドがない場合、処理終了
-		if (! $this->settings[$model->name]['allUpdateField']) {
+		if (! isset($commonFields)) {
+			$commonFields = $this->settings[$model->name]['commonFields'];
+		}
+		if (! isset($associations)) {
+			$associations = $this->settings[$model->name]['associations'];
+		}
+		if (! $commonFields && ! $associations) {
+			return true;
+		}
+		if (! $model->id || ! $model->data) {
 			return true;
 		}
 
-		$orgData = $model->data;
-		$orgId = $model->id;
+		//基準データの保持
+		$baseData = $model->data;
+		$baseId = $model->id;
 
-		//コピー元のデータ取得
-		$defaultUpdate = array();
-		$copyConditions = $conditions;
-		if (is_array($this->settings[$model->name]['allUpdateField'])) {
-			foreach ($this->settings[$model->name]['allUpdateField'] as $field) {
+		//コピー対象データ取得
+		$commonUpdate = array();
+		$conditions = array();
+		if ($commonFields) {
+			foreach ($commonFields as $field) {
 				$fieldValue = Hash::get($model->data[$model->alias], $field);
 
-				$copyConditions['OR'][$model->alias . '.' . $field . ' !='] = $fieldValue;
-				$defaultUpdate[$model->alias][$field] = $fieldValue;
+				$conditions[$model->alias . '.' . $field . ' !='] = $fieldValue;
+				$commonUpdate[$model->alias][$field] = $fieldValue;
 			}
 		}
-		$results = $model->find('all', array(
+		$targetConditions = $this->_getSaveConditions($model);
+		$targetConditions[$model->alias . '.' . 'is_translation'] = true;
+		if (! $this->settings[$model->name]['associations']) {
+			$targetConditions['OR'] = $conditions;
+		}
+		$targetDatas = $model->find('all', array(
 			'recursive' => -1,
-			'conditions' => Hash::merge(
-				$copyConditions,
-				Hash::get($this->settings[$model->name], 'allUpdateFieldConditions', array())
-			),
+			'callbacks' => false,
+			'conditions' => $targetConditions,
 		));
 
 		//データのコピー処理
-		foreach ($results as $data) {
-			$copyOrgId = $data[$model->alias]['id'];
+		$options = array(
+			'baseData' => $baseData,
+			'commonFields' => $commonFields,
+			'commonUpdate' => $commonUpdate,
+			'associations' => $associations,
+		);
+		$this->_saveM17nData($model, $targetDatas, $options);
+
+		return true;
+	}
+
+/**
+ * 多言語データの登録処理
+ *
+ * ## $options
+ * array(
+ *		'baseData' => 基準となるデータ,
+ *		'commonFields' => 共通フィールド,
+ *		'commonUpdate' => 共通フィールドの更新データ,
+ *		'associations' => 関連情報,
+ * );
+ *
+ * @param Model $model 呼び出し元Model
+ * @param array $targetDatas 対象データ
+ * @param array $options オプション
+ * @return bool
+ */
+	protected function _saveM17nData(Model $model, $targetDatas, $options) {
+		$associations = Hash::get($options, 'associations', array());
+		$commonFields = Hash::get($options, 'commonFields', array());
+		$commonUpdate = Hash::get($options, 'commonUpdate', array());
+		$baseData = Hash::get($options, 'baseData');
+		$isWorkflow = Hash::get(
+			$options,
+			'isWorkflow',
+			Hash::get($this->settings, $model->name . '.isWorkflow')
+		);
+		$languageId = Hash::get($options, 'languageId');
+
+		//データのコピー処理
+		foreach ($targetDatas as $targetData) {
+			if ($languageId) {
+				$targetData[$model->alias]['language_id'] = $languageId;
+			}
 
 			//ワークフローのデータであれば、is_activeとis_latestのフラグを更新する
-			if (! $this->_updateWorkflowFields($model, $data)) {
+			if (! $this->_updateWorkflowFields($model, $targetData)) {
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
 
 			//ワークフローのデータであれば、新規にデータを生成する
-			if ($this->_hasWorkflowFields($model)) {
-				unset($data[$model->alias]['id']);
+			$update = Hash::merge($targetData, $commonUpdate);
+			if ($this->_hasWorkflowFields($model) || $isWorkflow) {
+				unset($update[$model->alias]['id']);
 				$model->create(false);
 			}
 
-			$update = Hash::merge($data, $defaultUpdate);
+			//データの更新処理
 			$newData = $model->save($update, ['validate' => false, 'callbacks' => false]);
 			if (! $newData) {
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
 
-			//ワークフローのデータでコピーする場合で、関連テーブルを更新する
-			$newId = $newData[$model->alias]['id'];
-			if (! $this->_updateWorkflowAssociations($model, $newId, $orgId, $copyOrgId)) {
+			//関連テーブルの更新処理
+			$options2 = array(
+				'baseData' => $baseData,
+				'targetData' => $targetData,
+				'newData' => $newData,
+				'isWorkflow' => $isWorkflow,
+				'languageId' => Hash::get($newData[$model->alias], 'language_id')
+			);
+			if (! $this->_updateWorkflowAssociations($model, $options2, $associations)) {
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
 		}
-
-		$model->data = $orgData;
-		$model->id = $orgId;
 
 		return true;
 	}
@@ -360,47 +462,117 @@ class M17nBehavior extends ModelBehavior {
 
 /**
  * ワークフローのデータでコピーする場合で、関連テーブルを更新する
- * e.g) タスクプラグインなど
+ *
+ * ## $options
+ * array(
+ *		'baseData' => 基準となるデータ,
+ *		'targetData' => 対象データ,
+ *		'newData' => 登録したデータ,
+ *		'isWorkflow' => ワークフローかどうか
+ * );
  *
  * @param Model $model 呼び出し元Model
- * @param array $newId 更新するID
- * @param array $orgId 更新元(m17nなし)ID
- * @param array $copyOrgId 更新元(m17nあり)ID
+ * @param array $options オプション
+ * @param array|null $associations 関連情報
  * @return bool
  */
-	protected function _updateWorkflowAssociations(Model $model, $newId, $orgId, $copyOrgId) {
-		if (! $this->settings[$model->name]['associations']) {
-			return true;
+	protected function _updateWorkflowAssociations(Model $model, $options, $associations = null) {
+		if (! isset($associations)) {
+			$associations = $this->settings[$model->name]['associations'];
 		}
-		if (! $this->_hasWorkflowFields($model)) {
+		if (! $associations) {
 			return true;
 		}
 
-		foreach ($this->settings[$model->name]['associations'] as $modelName => $modelData) {
+		foreach ($associations as $modelName => $modelData) {
 			$model->loadModels([$modelName => $modelData['class']]);
 
-			$schema = $model->$modelName->schema();
-			unset($schema['id']);
-			$schemaColumns = implode(', ', array_keys($schema));
-
-			$tableName = $model->$modelName->tablePrefix . $model->$modelName->table;
-
 			if (Hash::get($modelData, 'isM17n')) {
-				$id = $copyOrgId;
+				$id = $options['targetData'][$model->alias]['id'];
 			} else {
-				$id = $orgId;
+				$id = $options['baseData'][$model->alias]['id'];
 			}
-			$sql = 'INSERT INTO ' . $tableName . '(' . $schemaColumns . ')' .
-					' SELECT ' . preg_replace('/' . $modelData['foreignKey'] . '/', $newId, $schemaColumns) .
-					' FROM ' . $tableName .
-					' WHERE ' . $modelData['foreignKey'] . ' = ' . $id;
+
 			if ($model->$modelName->hasField('plugin_key')) {
-				$sql .= ' AND plugin_key = \'' . Inflector::underscore($model->plugin) . '\'';
+				$conditions = array(
+					$modelData['foreignKey'] => $id,
+					'plugin_key' => Inflector::underscore($model->plugin)
+				);
+			} else {
+				$conditions = array(
+					$modelData['foreignKey'] => $id,
+				);
 			}
-			$model->$modelName->query($sql);
+
+			$targetDatas = $model->$modelName->find('all', array(
+				'recursive' => -1,
+				'callbacks' => false,
+				'conditions' => $conditions,
+			));
+
+			$commonFields = Hash::get(
+				$modelData,
+				'commonFields',
+				Hash::get($this->settings, $model->$modelName->name . '.commonFields', array())
+			);
+			$associations2 = Hash::get($modelData, 'associations');
+
+			$options2 = array(
+				'foreignKey' => $modelData['foreignKey'],
+				'associationId' => $options['newData'][$model->alias]['id'],
+				'commonFields' => $commonFields,
+				'associations' => $associations2,
+				'isWorkflow' => Hash::get($options, 'isWorkflow'),
+				'languageId' => Hash::get($options, 'languageId'),
+			);
+			$this->_saveWorkflowAssociations($model->$modelName, $targetDatas, $options2);
 		}
 
 		return true;
+	}
+
+/**
+ * ワークフローのデータでコピーする場合で、関連テーブルを更新する
+ *
+ * ## $options
+ * array(
+ *		'foreignKey' => 外部キーのフィールド,
+ *		'associationId' => 関連データのID,
+ *		'commonFields' => 共通フィールド,
+ *		'associations' => 関連情報,
+ *		'isWorkflow' => ワークフローかどうか
+ * );
+ *
+ * @param Model $model 呼び出し元Model※_updateWorkflowAssociations()の$model->$modelName
+ * @param array $targetDatas 対象データ
+ * @param array $options オプション
+ * @return bool
+ */
+	protected function _saveWorkflowAssociations(Model $model, $targetDatas, $options) {
+		$associations = Hash::get($options, 'associations');
+		$commonFields = Hash::get($options, 'commonFields');
+		$foreignKey = Hash::get($options, 'foreignKey');
+		$associationId = Hash::get($options, 'associationId');
+
+		foreach ($targetDatas as $targetData) {
+			$commonUpdate = array();
+			$commonUpdate[$model->alias][$foreignKey] = $associationId;
+			foreach ($commonFields as $field) {
+				$fieldValue = Hash::get($targetData[$model->alias], $field);
+				$commonUpdate[$model->alias][$field] = $fieldValue;
+			}
+
+			//データのコピー処理
+			$options2 = array(
+				'baseData' => $targetData,
+				'commonFields' => $commonFields,
+				'commonUpdate' => $commonUpdate,
+				'associations' => $associations,
+				'isWorkflow' => Hash::get($options, 'isWorkflow'),
+				'languageId' => Hash::get($options, 'languageId'),
+			);
+			$this->_saveM17nData($model, [$targetData], $options2);
+		}
 	}
 
 }
