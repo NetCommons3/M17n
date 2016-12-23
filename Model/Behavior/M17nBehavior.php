@@ -315,6 +315,7 @@ class M17nBehavior extends ModelBehavior {
  * @param array|null $associations 関連情報
  * @return bool
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 	public function saveM17nData(Model $model, $commonFields = null, $associations = null) {
 		//全言語をコピーするフィールドがない場合、処理終了
@@ -385,7 +386,6 @@ class M17nBehavior extends ModelBehavior {
  * @return bool
  * @throws InternalErrorException
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
- * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 	protected function _saveM17nData(Model $model, $targetDatas, $options) {
 		$associations = Hash::get($options, 'associations', array());
