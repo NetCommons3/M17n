@@ -12,11 +12,19 @@ App::uses('M17nAppController', 'M17n.Controller');
 
 /**
  * M17n Controller
- * 後で使用（言語の切り替え機能を使う際に使う予定）
  *
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Controller
  */
 class M17nController extends M17nAppController {
+
+/**
+ * 言語切り替えアクション
+ *
+ * @return void
+ */
+	public function index() {
+		$this->redirect($this->request->referer());
+	}
 
 }

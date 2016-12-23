@@ -19,9 +19,15 @@ msgstr ""
 msgid "Japanese"
 msgstr ""
 
+#: DataTypes/Model/DataType.php:189
+#: M17n/View/Elements/switch_language.ctp:27
+#: M17n/View/Helper/M17nHelper.php:740
 msgid "English"
 msgstr ""
 
+#: DataTypes/Model/DataType.php:189
+#: M17n/View/Elements/switch_language.ctp:27
+#: M17n/View/Helper/M17nHelper.php:740
 msgid "Chinese"
 msgstr ""
 
@@ -37,9 +43,11 @@ msgstr ""
 msgid "(Japanese)"
 msgstr ""
 
+#: M17n/View/Helper/SwitchLanguageHelper.php:65;92
 msgid "(English)"
 msgstr ""
 
+#: M17n/View/Helper/SwitchLanguageHelper.php:65;92
 msgid "(Chinese)"
 msgstr ""
 
@@ -47,8 +55,10 @@ msgstr ""
 msgid "(ja)"
 msgstr ""
 
+#: Users/Model/Behavior/ImportExportBehavior.php:413
 msgid "(en)"
 msgstr ""
 
+#: Users/Model/Behavior/ImportExportBehavior.php:413
 msgid "(ch)"
 msgstr ""

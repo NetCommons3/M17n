@@ -11,64 +11,44 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('OriginalKeyBehavior', 'NetCommons.Model/Behavior');
+App::uses('ModelBehavior', 'Model');
 
 /**
  * M17nBehavior
  *
  * 登録するコンテンツデータに対して、対応している言語分登録します。<br>
- * 対応言語を運用途中で追加する場合は、追加する言語の全データを作成するバッチプログラムが必要になります。
  *
  * コンテンツデータのテーブルに以下のフィールドを保持してください。
- * * key
- *     異なる言語で同一のデータが登録されます。
  * * language_id
  *     言語コードに対応するidが登録されます。
- *
- * コンテンツデータがbelongsToのアソシエーションを持ち、アソシエーション側でも言語ごとにデータがある場合は、
- * 登録時に外部キーとしてのIDを取得するための情報を指定してください。<br>
- * 指定内容は、外部キーのフィールド名、アソシエーションモデル名、ID取得条件です。
+ * * is_origin
+ *     オリジナルデータとします。
+ * * is_translation
+ *     翻訳したかどうか。
  *
  * #### サンプルコード
  * ```
  * public $actsAs = array(
  * 	'M17n.M17n' => array(
- * 		'associations' => array(
- * 			'faq_id' => array(
- * 				'className' => 'Faqs.Faq',
- * 			),
- * 			'category_id' => array(
- * 				'className' => 'Categories.Category',
- * 			),
- * 		)
+ * 		'keyField' => 'key', //デフォルト"key"
+ *		'commonFields' => array('category_id'), //このフィールドが更新された場合、全言語のデータを更新する
+ *		'associations' => array(
+ *			'(Model名)' => array(
+ *				'class' => (クラス名: Plugin.Model形式),
+ *				'foreignKey' => (外部キー),
+ *				'isM17n' => 多言語ありかどうか,
+ *			)
+ *		),
+ *		'afterCallback' => afterSaveを実行するかどうか,
+ *		'isWorkflow' => ワークフローかどうか。省略もしくはNULLの場合、
  * 	),
  * ```
  *
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package  NetCommons\M17n\Model\Befavior
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class M17nBehavior extends OriginalKeyBehavior {
-
-/**
- * オリジナルデータ
- *
- * @var array
- */
-	//private $__originalData;
-
-/**
- * 更新前の最新データ
- *
- * @var array
- */
-	//private $__beforeLastestData;
-
-/**
- * ターゲット言語リスト
- *
- * @var array|bool 新規登録の場合、beforeSaveでtrueをセットし、afterSaveで言語リストを取得する
- */
-	//private $__target;
+class M17nBehavior extends ModelBehavior {
 
 /**
  * Setup this behavior with the specified configuration settings.
@@ -77,42 +57,159 @@ class M17nBehavior extends OriginalKeyBehavior {
  * @param array $config Configuration settings for $model
  * @return void
  */
-	//public function setup(Model $model, $config = array()) {
-	//	$this->settings = Hash::merge($this->settings, $config);
-	//	if (! isset($this->settings['associations'])) {
-	//		$this->settings['associations'] = array();
-	//	}
-	//}
+	public function setup(Model $model, $config = array()) {
+		parent::setup($model, $config);
+		$this->settings[$model->name]['keyField'] = Hash::get($config, 'keyField', 'key');
+		$this->settings[$model->name]['commonFields'] = Hash::get($config, 'commonFields', array());
+		$this->settings[$model->name]['associations'] = Hash::get($config, 'associations', array());
+		$this->settings[$model->name]['afterCallback'] = Hash::get($config, 'afterCallback', true);
+		$this->settings[$model->name]['isWorkflow'] = Hash::get(
+			$config, 'isWorkflow', $this->_hasWorkflowFields($model)
+		);
+
+		//ビヘイビアの優先順位
+		$this->settings['priority'] = 8;
+	}
+
+/**
+ * M17nフィールドのチェック
+ *
+ * @param Model $model 呼び出し元Model
+ * @return bool
+ */
+	protected function _hasM17nFields(Model $model) {
+		$keyField = $this->settings[$model->name]['keyField'];
+
+		$fields = array(
+			$keyField, 'language_id', 'is_origin', 'is_translation',
+		);
+		if (! $this->__hasFields($model, $fields)) {
+			return false;
+		}
+
+		return isset($model->data[$model->alias][$keyField]);
+	}
+
+/**
+ * Workflowフィールドのチェック
+ *
+ * @param Model $model 呼び出し元Model
+ * @return bool
+ */
+	protected function _hasWorkflowFields(Model $model) {
+		$fields = array(
+			'status',
+			'is_active',
+			'is_latest',
+		);
+		return $this->__hasFields($model, $fields);
+	}
+
+/**
+ * フィールドのチェック
+ *
+ * @param Model $model 呼び出し元Model
+ * @param arrau $fields フィールド
+ * @return bool
+ */
+	private function __hasFields(Model $model, $fields) {
+		foreach ($fields as $field) {
+			if (! $model->hasField($field)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 /**
  * beforeSave is called before a model is saved. Returning false from a beforeSave callback
  * will abort the save operation.
  *
- * @param Model $model Model using this behavior
+ * @param Model $model 呼び出し元Model
  * @param array $options Options passed from Model::save().
  * @return mixed False if the operation should abort. Any other result will continue.
  * @see Model::save()
  */
-	//public function beforeSave(Model $model, $options = array()) {
-	//	parent::beforeSave($model, $options);
-	//
-	//	if (! $model->hasField('key') || ! $model->hasField('language_id') ||
-	//			! isset($model->data[$model->alias]['key']) || $model->data[$model->alias]['key'] === '') {
-	//
-	//		return true;
-	//	}
-	//
-	//	$currentData = $model->data;
-	//	if (! $this->__getOriginalData($model)) {
-	//		$model->data = $currentData;
-	//		return true;
-	//	}
-	//
-	//	$this->__getTargetLanguage($model);
-	//
-	//	$model->data = $currentData;
-	//	return true;
-	//}
+	public function beforeSave(Model $model, $options = array()) {
+		if (! $this->_hasM17nFields($model)) {
+			return true;
+		}
+
+		$keyField = $this->settings[$model->name]['keyField'];
+		if (! $keyField) {
+			return true;
+		}
+
+		//チェックするためのWHERE条件
+		if ($this->_hasWorkflowFields($model)) {
+			$transConditions = array(
+				$keyField => $model->data[$model->alias][$keyField],
+				'language_id !=' => Current::read('Language.id'),
+				'is_latest' => true
+			);
+			$ownLangConditions = array(
+				$keyField => $model->data[$model->alias][$keyField],
+				'language_id' => Current::read('Language.id'),
+				'is_latest' => true
+			);
+		} else {
+			$transConditions = array(
+				$keyField => $model->data[$model->alias][$keyField],
+				'language_id !=' => Current::read('Language.id'),
+			);
+			$ownLangConditions = array(
+				$keyField => $model->data[$model->alias][$keyField],
+				'language_id' => Current::read('Language.id')
+			);
+		}
+
+		//データが1件もないことを確認する
+		$count = $model->find('count', array(
+			'recursive' => -1,
+			'callbacks' => false,
+			'conditions' => array(
+				$keyField => $model->data[$model->alias][$keyField]
+			),
+		));
+		if ($count <= 0) {
+			$model->data[$model->alias]['language_id'] = Current::read('Language.id');
+			$model->data[$model->alias]['is_origin'] = true;
+			$model->data[$model->alias]['is_translation'] = false;
+
+			return true;
+		}
+
+		$model->data[$model->alias]['language_id'] = Current::read('Language.id');
+
+		//翻訳データのチェック
+		$count = $model->find('count', array(
+			'recursive' => -1,
+			'callbacks' => false,
+			'conditions' => $transConditions,
+		));
+		if ($count > 0) {
+			$model->data[$model->alias]['is_translation'] = true;
+		} else {
+			$model->data[$model->alias]['is_translation'] = false;
+		}
+
+		//当言語のデータのチェック
+		$data = $model->find('first', array(
+			'fields' => array('language_id', 'is_origin', 'is_translation'),
+			'callbacks' => false,
+			'recursive' => -1,
+			'conditions' => $ownLangConditions,
+		));
+		if ($data) {
+			$model->data[$model->alias]['is_origin'] = $data[$model->alias]['is_origin'];
+		} else {
+			$model->data[$model->alias]['is_origin'] = false;
+			$model->data[$model->alias] = Hash::remove($model->data[$model->alias], 'id');
+			$model->id = null;
+		}
+
+		return parent::beforeSave($model, $options);
+	}
 
 /**
  * afterSave is called after a model is saved.
@@ -124,216 +221,358 @@ class M17nBehavior extends OriginalKeyBehavior {
  * @throws InternalErrorException
  * @see Model::save()
  */
-	//public function afterSave(Model $model, $created, $options = array()) {
-	//	parent::afterSave($model, $created, $options);
-	//
-	//	if (! $this->__target) {
-	//		return true;
-	//	}
-	//
-	//	$currentData = $model->data;
-	//
-	//	foreach ($this->__target as $target) {
-	//		$data = $currentData;
-	//		//idのセット
-	//		if (isset($target[$model->alias]['id'])) {
-	//			$data[$model->alias]['id'] = $target[$model->alias]['id'];
-	//		} else {
-	//			$data[$model->alias]['id'] = null;
-	//		}
-	//		//language_idのセット
-	//		if (isset($target[$model->alias]['language_id'])) {
-	//			$data[$model->alias]['language_id'] = $target[$model->alias]['language_id'];
-	//		}
-	//		//frame_idのセット
-	//		$data = $this->__getFrameId($model, $data, $target);
-	//
-	//		//block_id取得
-	//		$data = $this->__getBlockId($model, $data, $target);
-	//
-	//		//その他のid取得
-	//		$data = $this->__getAssociationsId($model, $data);
-	//
-	//		//登録処理
-	//		$model->create();
-	//		if (! $model->save($data[$model->alias], array('validate' => false, 'callbacks' => false))) {
-	//			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
-	//		}
-	//	}
-	//
-	//	$model->data = $currentData;
-	//
-	//	return true;
-	//}
+	public function afterSave(Model $model, $created, $options = array()) {
+		if (! $this->_hasM17nFields($model)) {
+			return parent::afterSave($model, $created, $options);
+		}
+
+		$conditions = $this->_getSaveConditions($model);
+		if (! $conditions) {
+			return parent::afterSave($model, $created, $options);
+		}
+
+		//is_translationの更新
+		$this->updateTranslationField($model);
+
+		//多言語化の処理
+		if (! $this->settings[$model->name]['afterCallback']) {
+			return parent::afterSave($model, $created, $options);
+		}
+
+		$newOrgData = $model->data;
+		$newOrgId = $model->id;
+
+		$this->saveM17nData($model);
+
+		$model->data = $newOrgData;
+		$model->id = $newOrgId;
+
+		return parent::afterSave($model, $created, $options);
+	}
 
 /**
- * オリジナルデータ取得
+ * saveの条件を取得する
  *
  * @param Model $model Model using this behavior
+ * @return array
+ * @throws InternalErrorException
+ * @see Model::save()
+ */
+	protected function _getSaveConditions(Model $model) {
+		$keyField = $this->settings[$model->name]['keyField'];
+		if (! $keyField) {
+			return false;
+		}
+
+		if ($this->_hasWorkflowFields($model)) {
+			$conditions = array(
+				$model->alias . '.' . $keyField => $model->data[$model->alias][$keyField],
+				$model->alias . '.' . 'language_id !=' => Current::read('Language.id'),
+				$model->alias . '.' . 'is_translation' => false,
+				$model->alias . '.' . 'is_latest' => true
+			);
+		} elseif ($this->_hasM17nFields($model)) {
+			$conditions = array(
+				$model->alias . '.' . $keyField => $model->data[$model->alias][$keyField],
+				$model->alias . '.' . 'language_id !=' => Current::read('Language.id'),
+				$model->alias . '.' . 'is_translation' => false,
+			);
+		} else {
+			$conditions = array(
+				$model->alias . '.' . $keyField => $model->data[$model->alias][$keyField],
+			);
+		}
+
+		return $conditions;
+	}
+
+/**
+ * is_translationの更新
+ *
+ * @param Model $model 呼び出し元Model
+ * @return bool
+ * @throws InternalErrorException
+ */
+	public function updateTranslationField(Model $model) {
+		$conditions = $this->_getSaveConditions($model);
+
+		$update = array(
+			'is_translation' => true,
+		);
+
+		if (! $model->updateAll($update, $conditions)) {
+			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+		}
+
+		return true;
+	}
+
+/**
+ * 全言語をコピーする処理
+ *
+ * @param Model $model 呼び出し元Model
+ * @param array|null $commonFields 共通フィールド
+ * @param array|null $associations 関連情報
+ * @return bool
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ */
+	public function saveM17nData(Model $model, $commonFields = null, $associations = null) {
+		//全言語をコピーするフィールドがない場合、処理終了
+		if (! isset($commonFields)) {
+			$commonFields = $this->settings[$model->name]['commonFields'];
+		}
+		if (! isset($associations)) {
+			$associations = $this->settings[$model->name]['associations'];
+		}
+		if (! $commonFields && ! $associations) {
+			return true;
+		}
+		if (! $model->id || ! $model->data) {
+			return true;
+		}
+
+		//基準データの保持
+		$baseData = $model->data;
+
+		//コピー対象データ取得
+		$commonUpdate = array();
+		$conditions = array();
+		if ($commonFields) {
+			foreach ($commonFields as $field) {
+				$fieldValue = Hash::get($model->data[$model->alias], $field);
+
+				$conditions[$model->alias . '.' . $field . ' !='] = $fieldValue;
+				$commonUpdate[$model->alias][$field] = $fieldValue;
+			}
+		}
+		$targetConditions = $this->_getSaveConditions($model);
+		$targetConditions[$model->alias . '.' . 'is_translation'] = true;
+		if (! $this->settings[$model->name]['associations']) {
+			$targetConditions['OR'] = $conditions;
+		}
+		$targetDatas = $model->find('all', array(
+			'recursive' => -1,
+			'callbacks' => false,
+			'conditions' => $targetConditions,
+		));
+
+		//データのコピー処理
+		$options = array(
+			'baseData' => $baseData,
+			'commonFields' => $commonFields,
+			'commonUpdate' => $commonUpdate,
+			'associations' => $associations,
+		);
+		$this->_saveM17nData($model, $targetDatas, $options);
+
+		return true;
+	}
+
+/**
+ * 多言語データの登録処理
+ *
+ * ## $options
+ * array(
+ *		'baseData' => 基準となるデータ,
+ *		'commonFields' => 共通フィールド,
+ *		'commonUpdate' => 共通フィールドの更新データ,
+ *		'associations' => 関連情報,
+ * );
+ *
+ * @param Model $model 呼び出し元Model
+ * @param array $targetDatas 対象データ
+ * @param array $options オプション
+ * @return bool
+ * @throws InternalErrorException
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
+ */
+	protected function _saveM17nData(Model $model, $targetDatas, $options) {
+		$associations = Hash::get($options, 'associations', array());
+		$commonUpdate = Hash::get($options, 'commonUpdate', array());
+		$baseData = Hash::get($options, 'baseData');
+		$isWorkflow = Hash::get(
+			$options,
+			'isWorkflow',
+			Hash::get($this->settings, $model->name . '.isWorkflow')
+		);
+		$languageId = Hash::get($options, 'languageId');
+
+		//データのコピー処理
+		foreach ($targetDatas as $targetData) {
+			if ($languageId) {
+				$targetData[$model->alias]['language_id'] = $languageId;
+			}
+
+			//ワークフローのデータであれば、is_activeとis_latestのフラグを更新する
+			if (! $this->_updateWorkflowFields($model, $targetData)) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			}
+
+			//ワークフローのデータであれば、新規にデータを生成する
+			$update = Hash::merge($targetData, $commonUpdate);
+			if ($this->_hasWorkflowFields($model) || $isWorkflow) {
+				unset($update[$model->alias]['id']);
+				$model->create(false);
+			}
+
+			//データの更新処理
+			$newData = $model->save($update, ['validate' => false, 'callbacks' => false]);
+			if (! $newData) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			}
+
+			//関連テーブルの更新処理
+			$options2 = array(
+				'baseData' => $baseData,
+				'targetData' => $targetData,
+				'newData' => $newData,
+				'isWorkflow' => $isWorkflow,
+				'languageId' => Hash::get($newData[$model->alias], 'language_id')
+			);
+			if (! $this->_updateWorkflowAssociations($model, $options2, $associations)) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			}
+		}
+
+		return true;
+	}
+
+/**
+ * ワークフローのデータであれば、is_activeとis_latestのフラグを更新する
+ *
+ * @param Model $model 呼び出し元Model
+ * @param array $data 更新データ
  * @return bool
  */
-	//private function __getOriginalData(Model $model) {
-	//	$this->__originalData = $model->find('first', array(
-	//		'recursive' => -1,
-	//		'conditions' => array($model->alias . '.key' => $model->data[$model->alias]['key']),
-	//		'order' => array($model->alias . '.id' => 'asc'),
-	//	));
-	//
-	//	if (! $this->__originalData) {
-	//		$languages = Current::readM17n(null, 'Language');
-	//		$this->__target = array();
-	//		foreach ($languages as $language) {
-	//			if ($language['Language']['id'] === Current::read('Language.id')) {
-	//				continue;
-	//			}
-	//			$options = array();
-	//			$options[$model->alias]['language_id'] = $language['Language']['id'];
-	//			if ($model->hasField('frame_id')) {
-	//				$options['Frame']['id'] = Current::readM17n($language['Language']['id'], 'Frame', 'id');
-	//				$options['Frame']['language_id'] = $language['Language']['id'];
-	//			}
-	//			if ($model->hasField('block_id')) {
-	//				$options['Block']['id'] = Current::readM17n($language['Language']['id'], 'Block', 'id');
-	//				$options['Block']['language_id'] = $language['Language']['id'];
-	//			}
-	//			$this->__target[] = $model->createAll($options);
-	//		}
-	//		return false;
-	//	}
-	//
-	//	if ($this->__originalData[$model->alias]['language_id'] !== Current::read('Language.id')) {
-	//		return false;
-	//	}
-	//
-	//	return true;
-	//}
+	protected function _updateWorkflowFields(Model $model, $data) {
+		if (! $this->_hasWorkflowFields($model)) {
+			return true;
+		}
+
+		$update = array(
+			'is_active' => false,
+			'is_latest' => false,
+		);
+		$conditions = array(
+			$model->alias . '.id' => $data[$model->alias]['id']
+		);
+		return $model->updateAll($update, $conditions);
+	}
 
 /**
- * ターゲットデータ取得
+ * ワークフローのデータでコピーする場合で、関連テーブルを更新する
  *
- * @param Model $model Model using this behavior
- * @return void
- */
-	//private function __getTargetLanguage(Model $model) {
-	//	if ($model->hasField('is_latest')) {
-	//		$this->__beforeLastestData = $model->find('first', array(
-	//			'recursive' => -1,
-	//			'conditions' => array(
-	//				'key' => $model->data[$model->alias]['key'],
-	//				'language_id' => Current::read('Language.id'),
-	//				'is_latest' => true,
-	//			),
-	//			'order' => array('id' => 'desc'),
-	//		));
-	//
-	//		$conditions = array(
-	//			$model->alias . '.key' => $model->data[$model->alias]['key'],
-	//			$model->alias . '.language_id !=' => Current::read('Language.id'),
-	//			$model->alias . '.is_latest' => true,
-	//			$model->alias . '.modified' => $this->__beforeLastestData[$model->alias]['modified'],
-	//		);
-	//	} else {
-	//		$conditions = array(
-	//			$model->alias . '.key' => $model->data[$model->alias]['key'],
-	//			$model->alias . '.language_id !=' => Current::read('Language.id'),
-	//			$model->alias . '.modified' => $this->__originalData[$model->alias]['modified'],
-	//		);
-	//	}
-	//
-	//	$this->__target = $model->find('all', array(
-	//		'recursive' => 0,
-	//		'conditions' => $conditions,
-	//	));
-	//}
-
-/**
- * frame_id取得
+ * ## $options
+ * array(
+ *		'baseData' => 基準となるデータ,
+ *		'targetData' => 対象データ,
+ *		'newData' => 登録したデータ,
+ *		'isWorkflow' => ワークフローかどうか
+ * );
  *
- * @param Model $model Model using this behavior
- * @param array $data 登録データ
- * @param array $target ターゲットデータ
+ * @param Model $model 呼び出し元Model
+ * @param array $options オプション
+ * @param array|null $associations 関連情報
  * @return bool
  */
-	//private function __getFrameId(Model $model, $data, $target) {
-	//	//frame_idのセット
-	//	if ($model->hasField('frame_id')) {
-	//		if (isset($target['Frame']['language_id'])) {
-	//			$data[$model->alias]['frame_id'] = Current::readM17n(
-	//				$target['Frame']['language_id'], 'Frame', 'id'
-	//			);
-	//		} elseif (isset($target[$model->alias]['frame_id'])) {
-	//			$data[$model->alias]['frame_id'] = $target[$model->alias]['frame_id'];
-	//		}
-	//	}
-	//
-	//	return $data;
-	//}
+	protected function _updateWorkflowAssociations(Model $model, $options, $associations = null) {
+		if (! isset($associations)) {
+			$associations = $this->settings[$model->name]['associations'];
+		}
+		if (! $associations) {
+			return true;
+		}
+
+		foreach ($associations as $modelName => $modelData) {
+			$model->loadModels([$modelName => $modelData['class']]);
+
+			if (Hash::get($modelData, 'isM17n')) {
+				$id = $options['targetData'][$model->alias]['id'];
+			} else {
+				$id = $options['baseData'][$model->alias]['id'];
+			}
+
+			if ($model->$modelName->hasField('plugin_key')) {
+				$conditions = array(
+					$modelData['foreignKey'] => $id,
+					'plugin_key' => Inflector::underscore($model->plugin)
+				);
+			} else {
+				$conditions = array(
+					$modelData['foreignKey'] => $id,
+				);
+			}
+
+			$targetDatas = $model->$modelName->find('all', array(
+				'recursive' => -1,
+				'callbacks' => false,
+				'conditions' => $conditions,
+			));
+
+			$commonFields = Hash::get(
+				$modelData,
+				'commonFields',
+				Hash::get($this->settings, $model->$modelName->name . '.commonFields', array())
+			);
+			$associations2 = Hash::get($modelData, 'associations');
+
+			$options2 = array(
+				'foreignKey' => $modelData['foreignKey'],
+				'associationId' => $options['newData'][$model->alias]['id'],
+				'commonFields' => $commonFields,
+				'associations' => $associations2,
+				'isWorkflow' => Hash::get($options, 'isWorkflow'),
+				'languageId' => Hash::get($options, 'languageId'),
+			);
+			$this->_saveWorkflowAssociations($model->$modelName, $targetDatas, $options2);
+		}
+
+		return true;
+	}
 
 /**
- * block_id取得
+ * ワークフローのデータでコピーする場合で、関連テーブルを更新する
  *
- * @param Model $model Model using this behavior
- * @param array $data 登録データ
- * @param array $target ターゲットデータ
+ * ## $options
+ * array(
+ *		'foreignKey' => 外部キーのフィールド,
+ *		'associationId' => 関連データのID,
+ *		'commonFields' => 共通フィールド,
+ *		'associations' => 関連情報,
+ *		'isWorkflow' => ワークフローかどうか
+ * );
+ *
+ * @param Model $model 呼び出し元Model※_updateWorkflowAssociations()の$model->$modelName
+ * @param array $targetDatas 対象データ
+ * @param array $options オプション
  * @return bool
  */
-	//private function __getBlockId(Model $model, $data, $target) {
-	//	//block_idのセット
-	//	if ($model->hasField('block_id')) {
-	//		if (isset($target['Block']['language_id'])) {
-	//			$data[$model->alias]['block_id'] = Current::readM17n(
-	//				$target['Block']['language_id'], 'Block', 'id'
-	//			);
-	//		} elseif (isset($target[$model->alias]['block_id'])) {
-	//			$data[$model->alias]['block_id'] = $target[$model->alias]['block_id'];
-	//		}
-	//	}
-	//
-	//	return $data;
-	//}
+	protected function _saveWorkflowAssociations(Model $model, $targetDatas, $options) {
+		$associations = Hash::get($options, 'associations');
+		$commonFields = Hash::get($options, 'commonFields');
+		$foreignKey = Hash::get($options, 'foreignKey');
+		$associationId = Hash::get($options, 'associationId');
 
-/**
- * 関連テーブルのID取得
- *
- * @param Model $model Model using this behavior
- * @param array $data 登録データ
- * @return bool
- */
-	//private function __getAssociationsId(Model $model, $data) {
-	//	//その他のidをセット
-	//	foreach ($this->settings['associations'] as $field => $association) {
-	//		if (! isset($data[$model->alias][$field]) || ! $data[$model->alias][$field]) {
-	//			continue;
-	//		}
-	//		list(, $assocModel) = pluginSplit($association['className']);
-	//		$this->$assocModel = ClassRegistry::init($association['className'], true);
-	//		$origin = $this->$assocModel->find('first', array(
-	//			'recursive' => -1,
-	//			'fields' => array('key'),
-	//			'conditions' => array('id' => $data[$model->alias][$field])
-	//		));
-	//		$conditions = array(
-	//			'key' => $origin[$this->$assocModel->alias]['key'],
-	//			'language_id' => $data[$model->alias]['language_id']
-	//		);
-	//		if (isset($association['conditions'])) {
-	//			foreach ($association['conditions'] as $key) {
-	//				$conditions[$key] = $data[$model->alias][$key];
-	//			}
-	//		}
-	//		$assoc = $this->$assocModel->find('first', array(
-	//			'recursive' => -1,
-	//			'fields' => array('id'),
-	//			'conditions' => $conditions,
-	//		));
-	//		if ($assoc) {
-	//			$data[$model->alias][$field] = $assoc[$this->$assocModel->alias]['id'];
-	//		} else {
-	//			$data[$model->alias][$field] = 0;
-	//		}
-	//	}
-	//
-	//	return $data;
-	//}
+		foreach ($targetDatas as $targetData) {
+			$commonUpdate = array();
+			$commonUpdate[$model->alias][$foreignKey] = $associationId;
+			foreach ($commonFields as $field) {
+				$fieldValue = Hash::get($targetData[$model->alias], $field);
+				$commonUpdate[$model->alias][$field] = $fieldValue;
+			}
+
+			//データのコピー処理
+			$options2 = array(
+				'baseData' => $targetData,
+				'commonFields' => $commonFields,
+				'commonUpdate' => $commonUpdate,
+				'associations' => $associations,
+				'isWorkflow' => Hash::get($options, 'isWorkflow'),
+				'languageId' => Hash::get($options, 'languageId'),
+			);
+			$this->_saveM17nData($model, [$targetData], $options2);
+		}
+	}
 
 }
