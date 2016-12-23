@@ -67,7 +67,7 @@ class M17nHelperLanguagesTest extends NetCommonsCakeTestCase {
 		return array(
 			array('method' => 'assertTextContains',
 				'options' => array('class' => 'test-class', 'default' => 'ja'),
-				'expected' => '<select name="data[test]" class="test-class"'),
+				'expected' => '<select name="data[test]"  class="test-class"'),
 			array('method' => 'assertTextContains',
 				'options' => array('class' => 'test-class', 'default' => 'ja'),
 				'expected' => '<option value="ja" selected="selected">'),

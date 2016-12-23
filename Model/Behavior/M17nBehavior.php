@@ -46,6 +46,7 @@ App::uses('ModelBehavior', 'Model');
  *
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package  NetCommons\M17n\Model\Befavior
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class M17nBehavior extends ModelBehavior {
 
@@ -249,14 +250,11 @@ class M17nBehavior extends ModelBehavior {
 		return parent::afterSave($model, $created, $options);
 	}
 
-
 /**
- * afterSave is called after a model is saved.
+ * saveの条件を取得する
  *
  * @param Model $model Model using this behavior
- * @param bool $created True if this save created a new record
- * @param array $options Options passed from Model::save().
- * @return bool
+ * @return array
  * @throws InternalErrorException
  * @see Model::save()
  */
@@ -316,6 +314,7 @@ class M17nBehavior extends ModelBehavior {
  * @param array|null $commonFields 共通フィールド
  * @param array|null $associations 関連情報
  * @return bool
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 	public function saveM17nData(Model $model, $commonFields = null, $associations = null) {
 		//全言語をコピーするフィールドがない場合、処理終了
@@ -334,7 +333,6 @@ class M17nBehavior extends ModelBehavior {
 
 		//基準データの保持
 		$baseData = $model->data;
-		$baseId = $model->id;
 
 		//コピー対象データ取得
 		$commonUpdate = array();
@@ -385,10 +383,12 @@ class M17nBehavior extends ModelBehavior {
  * @param array $targetDatas 対象データ
  * @param array $options オプション
  * @return bool
+ * @throws InternalErrorException
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 	protected function _saveM17nData(Model $model, $targetDatas, $options) {
 		$associations = Hash::get($options, 'associations', array());
-		$commonFields = Hash::get($options, 'commonFields', array());
 		$commonUpdate = Hash::get($options, 'commonUpdate', array());
 		$baseData = Hash::get($options, 'baseData');
 		$isWorkflow = Hash::get(
