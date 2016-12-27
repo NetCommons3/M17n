@@ -46,7 +46,7 @@ class Records extends NetCommonsMigration {
 				'id' => '1',
 				'code' => 'en',
 				'weight' => '2',
-				'is_active' => true,
+				'is_active' => false,
 			),
 			array(
 				'id' => '2',

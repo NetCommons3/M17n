@@ -44,24 +44,24 @@ class Language extends M17nAppModel {
  */
 	public function beforeValidate($options = array()) {
 		$this->validate = Hash::merge($this->validate, array(
-		'code' => array(
-			'notBlank' => array(
-				'rule' => array('notBlank'),
-				'message' => __d('net_commons', 'Invalid request.'),
+			'code' => array(
+				'notBlank' => array(
+					'rule' => array('notBlank'),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
 			),
-		),
-		'weight' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				'message' => __d('net_commons', 'Invalid request.'),
+			'weight' => array(
+				'numeric' => array(
+					'rule' => array('numeric'),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
 			),
-		),
-		'is_active' => array(
-			'boolean' => array(
-				'rule' => array('boolean'),
-				'message' => __d('net_commons', 'Invalid request.'),
+			'is_active' => array(
+				'boolean' => array(
+					'rule' => array('boolean'),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
 			),
-		),
 		));
 
 		return parent::beforeValidate($options);
