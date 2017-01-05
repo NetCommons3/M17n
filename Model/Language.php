@@ -117,4 +117,71 @@ class Language extends M17nAppModel {
 		return self::$languages;
 	}
 
+/**
+ * 利用可能な言語登録
+ *
+ * 呼び出しもとでbeginを実行する
+ *
+ * @param array $data リクエストデータ
+ * @return bool
+ * @throws InternalErrorException
+ */
+	public function saveActive($data) {
+		if (! $this->validateActive($data)) {
+			return false;
+		}
+
+		$update = array(
+			'is_active' => true,
+		);
+		$conditions = array(
+			'code' => $data['Language']['code']
+		);
+		if (! $this->updateAll($update, $conditions)) {
+			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+		}
+
+		$update = array(
+			'is_active' => false,
+		);
+		$conditions = array(
+			'code NOT IN' => $data['Language']['code']
+		);
+		if (! $this->updateAll($update, $conditions)) {
+			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+		}
+
+		return true;
+	}
+
+/**
+ * 利用可能な言語登録の入力チェック
+ *
+ * @param array $data リクエストデータ
+ * @return bool
+ */
+	public function validateActive($data) {
+		$fieldName = 'Language.code';
+
+		$languages = $this->find('list', array(
+			'fields' => array('code', 'is_active'),
+			'recursive' => -1,
+		));
+		$defaultLangs = array_keys($languages);
+
+		if (! isset($data['Language']['code']) || count($data['Language']['code']) === 0) {
+			$this->invalidate(
+				$fieldName, __d('site_manager', 'Please select the language to use.')
+			);
+		}
+
+		if (array_diff($data['Language']['code'], $defaultLangs)) {
+			$this->invalidate(
+				$fieldName, __d('net_commons', 'Invalid request.')
+			);
+		}
+
+		return count($this->validationErrors) === 0;
+	}
+
 }
