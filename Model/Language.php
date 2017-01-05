@@ -124,6 +124,7 @@ class Language extends M17nAppModel {
  *
  * @param array $data リクエストデータ
  * @return bool
+ * @throws InternalErrorException
  */
 	public function saveActive($data) {
 		if (! $this->validateActive($data)) {
