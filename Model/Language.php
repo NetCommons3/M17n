@@ -10,6 +10,7 @@
  */
 
 App::uses('M17nAppModel', 'M17n.Model');
+App::uses('M17n.M17nHelper', 'M17n.Controller');
 
 /**
  * Language Model
@@ -115,6 +116,28 @@ class Language extends M17nAppModel {
 		));
 
 		return self::$languages;
+	}
+
+/**
+ * 言語データを取得
+ *
+ * @return array
+ */
+	public function getLanguagesWithName() {
+		$languages = $this->find('list', array(
+			'fields' => array('code', 'is_active'),
+			'recursive' => -1,
+		));
+		$activeLangs = array();
+		$enableLangs = array_intersect_key(M17nHelper::$languages, $languages);
+		foreach ($enableLangs as $code => $value) {
+			if ($languages[$code]) {
+				$activeLangs[] = $code;
+			}
+			$enableLangs[$code] = __d('m17n', $value);
+		}
+
+		return array($activeLangs, $enableLangs);
 	}
 
 /**
