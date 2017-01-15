@@ -39,12 +39,12 @@ class AddM17nBehavior extends ModelBehavior {
  * @throws InternalErrorException
  */
 	public function saveTranslation(Model $model) {
-		$dataSource = ConnectionManager::getDataSource($model->useDbConfig);
-		$tables = $dataSource->listSources();
+		//$dataSource = ConnectionManager::getDataSource($model->useDbConfig);
+		//$tables = $dataSource->listSources();
 
-//		if (! in_array($model->tablePrefix . $model->useTable, $tables)) {
-//			return false;
-//		}
+		//if (! in_array($model->tablePrefix . $model->useTable, $tables)) {
+		//	return false;
+		//}
 
 		return true;
 	}
