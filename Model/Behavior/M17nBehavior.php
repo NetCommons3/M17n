@@ -126,7 +126,6 @@ class M17nBehavior extends ModelBehavior {
  * ルームに関するプラグインかどうか
  *
  * @param Model $model 呼び出し元Model
- * @param bool|null $isRoom ルームプラグインかどうか
  * @return bool
  */
 	public function isM7nGeneralPlugin(Model $model) {
