@@ -12,6 +12,7 @@
  */
 
 App::uses('ModelBehavior', 'Model');
+App::uses('Plugin', 'PluginManager.Model');
 
 /**
  * M17nBehavior
@@ -122,6 +123,27 @@ class M17nBehavior extends ModelBehavior {
 	}
 
 /**
+ * ルームに関するプラグインかどうか
+ *
+ * @param Model $model 呼び出し元Model
+ * @return bool
+ */
+	public function isM7nGeneralPlugin(Model $model) {
+		if (! $model->hasField('language_id')) {
+			return false;
+		}
+		if (Current::read('Plugin.type') !== Plugin::PLUGIN_TYPE_FOR_FRAME) {
+			return true;
+		}
+		if (! Current::read('Room.id') || ! Current::read('Plugin.is_m17n') ||
+				! Current::read('Space.is_m17n')) {
+			return false;
+		}
+
+		return true;
+	}
+
+/**
  * beforeSave is called before a model is saved. Returning false from a beforeSave callback
  * will abort the save operation.
  *
@@ -137,6 +159,10 @@ class M17nBehavior extends ModelBehavior {
 
 		$keyField = $this->settings[$model->name]['keyField'];
 		if (! $keyField) {
+			return true;
+		}
+
+		if (! $this->isM7nGeneralPlugin($model)) {
 			return true;
 		}
 
@@ -224,6 +250,10 @@ class M17nBehavior extends ModelBehavior {
 	public function afterSave(Model $model, $created, $options = array()) {
 		if (! $this->_hasM17nFields($model)) {
 			return parent::afterSave($model, $created, $options);
+		}
+
+		if (! $this->isM7nGeneralPlugin($model)) {
+			return true;
 		}
 
 		$conditions = $this->_getSaveConditions($model);
