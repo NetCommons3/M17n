@@ -42,6 +42,7 @@ App::uses('Plugin', 'PluginManager.Model');
  *		),
  *		'afterCallback' => afterSaveを実行するかどうか,
  *		'isWorkflow' => ワークフローかどうか。省略もしくはNULLの場合、
+ *		'callbacks' => beforeSave、afterSave事態を実行するかどうか,
  * 	),
  * ```
  *
@@ -64,6 +65,7 @@ class M17nBehavior extends ModelBehavior {
 		$this->settings[$model->name]['commonFields'] = Hash::get($config, 'commonFields', array());
 		$this->settings[$model->name]['associations'] = Hash::get($config, 'associations', array());
 		$this->settings[$model->name]['afterCallback'] = Hash::get($config, 'afterCallback', true);
+		$this->settings[$model->name]['callbacks'] = Hash::get($config, 'callbacks', true);
 		$this->settings[$model->name]['isWorkflow'] = Hash::get(
 			$config, 'isWorkflow', $this->_hasWorkflowFields($model)
 		);
@@ -73,12 +75,28 @@ class M17nBehavior extends ModelBehavior {
 	}
 
 /**
+ * behaviorの設定値を取得する
+ *
+ * @param Model $model Model using this behavior
+ * @param string $keyPath Hash::getのpath
+ * @param mixed $default デフォルト値
+ * @return void
+ */
+	public function getM17nSettings(Model $model, $keyPath, $default = null) {
+		return Hash::get($this->settings[$model->name], $keyPath, $default);
+	}
+
+/**
  * M17nフィールドのチェック
  *
  * @param Model $model 呼び出し元Model
  * @return bool
  */
 	protected function _hasM17nFields(Model $model) {
+		if (! $this->settings[$model->name]['callbacks']) {
+			return false;
+		}
+
 		$keyField = $this->settings[$model->name]['keyField'];
 
 		$fields = array(
@@ -151,6 +169,7 @@ class M17nBehavior extends ModelBehavior {
  * @param array $options Options passed from Model::save().
  * @return mixed False if the operation should abort. Any other result will continue.
  * @see Model::save()
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 	public function beforeSave(Model $model, $options = array()) {
 		if (! $this->_hasM17nFields($model)) {
@@ -164,6 +183,10 @@ class M17nBehavior extends ModelBehavior {
 
 		if (! $this->isM7nGeneralPlugin($model)) {
 			return true;
+		}
+
+		if ($model->hasField('is_original_copy')) {
+			$model->data[$model->alias]['is_original_copy'] = false;
 		}
 
 		//チェックするためのWHERE条件
