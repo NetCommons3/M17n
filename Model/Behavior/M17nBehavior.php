@@ -169,6 +169,7 @@ class M17nBehavior extends ModelBehavior {
  * @param array $options Options passed from Model::save().
  * @return mixed False if the operation should abort. Any other result will continue.
  * @see Model::save()
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 	public function beforeSave(Model $model, $options = array()) {
 		if (! $this->_hasM17nFields($model)) {
