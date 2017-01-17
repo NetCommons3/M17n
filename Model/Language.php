@@ -35,6 +35,15 @@ class Language extends M17nAppModel {
 	public static $languages = array();
 
 /**
+ * use behaviors
+ *
+ * @var array
+ */
+	public $actsAs = array(
+		'M17n.SaveM17n',
+	);
+
+/**
  * Called during validation operations, before validation. Please note that custom
  * validation rules can be defined in $validate.
  *
@@ -174,6 +183,16 @@ class Language extends M17nAppModel {
 			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 		}
 
+		$languages = $this->find('list', array(
+			'recursive' => -1,
+			'conditions' => array(
+				'is_active' => true,
+			),
+		));
+		foreach ($languages as $langId) {
+			$this->copyOrignalData($langId);
+		}
+
 		return true;
 	}
 
@@ -192,10 +211,12 @@ class Language extends M17nAppModel {
 		));
 		$defaultLangs = array_keys($languages);
 
-		if (! isset($data['Language']['code']) || count($data['Language']['code']) === 0) {
+		if (! isset($data['Language']['code']) || ! is_array($data['Language']['code']) ||
+				count($data['Language']['code']) === 0) {
 			$this->invalidate(
 				$fieldName, __d('site_manager', 'Please select the language to use.')
 			);
+			return false;
 		}
 
 		if (array_diff($data['Language']['code'], $defaultLangs)) {
