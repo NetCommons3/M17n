@@ -183,14 +183,16 @@ class Language extends M17nAppModel {
 			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 		}
 
-		$languages = $this->find('list', array(
-			'recursive' => -1,
-			'conditions' => array(
-				'is_active' => true,
-			),
-		));
-		foreach ($languages as $langId) {
-			$this->copyOrignalData($langId);
+		if (Configure::read('NetCommons.installed')) {
+			$languages = $this->find('list', array(
+				'recursive' => -1,
+				'conditions' => array(
+					'is_active' => true,
+				),
+			));
+			foreach ($languages as $langId) {
+				$this->copyOrignalData($langId);
+			}
 		}
 
 		return true;
