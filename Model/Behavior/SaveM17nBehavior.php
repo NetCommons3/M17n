@@ -120,6 +120,9 @@ class SaveM17nBehavior extends ModelBehavior {
 			if (! $this->_executeOriginalCopy($TargetModel, $languageId, $plugin['Plugin']['type'])) {
 				return false;
 			}
+			if (! $this->_updateOriginalCopy($TargetModel)) {
+				return false;
+			}
 		}
 
 		return true;
@@ -171,7 +174,7 @@ class SaveM17nBehavior extends ModelBehavior {
 		$sql .= $this->_getSqlWhere($TargetModel, $pluguinType);
 
 		CakeLog::info(
-			'[original copy] SystemPlugin ' .
+			'[original copy ' . $TargetModel->plugin . '] ' .
 			$TargetModel->name . ' execute'
 		);
 
@@ -179,9 +182,45 @@ class SaveM17nBehavior extends ModelBehavior {
 		$TargetModel->query($sql);
 
 		CakeLog::info(
-			'[original copy plguin_type:' . $pluguinType . ']' .
+			'[original copy ' . $TargetModel->plugin . '] ' .
 			$TargetModel->name . ' success rows=' . $TargetModel->getAffectedRows()
 		);
+
+		return true;
+	}
+
+/**
+ * 他言語データ更新処理
+ *
+ * @param Model $TargetModel 実行するModel
+ * @return bool
+ * @throws InternalErrorException
+ */
+	protected function _updateOriginalCopy(Model $TargetModel) {
+		if ($TargetModel->name === 'PagesLanguage') {
+			CakeLog::info(
+				'[original copy ' . $TargetModel->plugin . '] ' .
+				$TargetModel->name . ' update'
+			);
+			$update = array(
+				'is_translation' => true
+			);
+			$conditions = array(
+				'OR' => array(
+					'page_id' => $this->_getPageIdTop($TargetModel),
+					'name !=' => ''
+				),
+				'is_translation' => false
+			);
+			if (! $TargetModel->updateAll($update, $conditions)) {
+				return false;
+			}
+
+			CakeLog::info(
+				'[original copy ' . $TargetModel->plugin . '] ' .
+				$TargetModel->name . ' success'
+			);
+		}
 
 		return true;
 	}
@@ -193,6 +232,10 @@ class SaveM17nBehavior extends ModelBehavior {
  * @return string|bool
  */
 	protected function _getFieldKey(Model $TargetModel) {
+		if ($TargetModel->name === 'PagesLanguage') {
+			return $TargetModel->getM17nSettings('keyField');
+		}
+
 		if (! $TargetModel->hasField('language_id') ||
 				! $TargetModel->hasField('is_origin') ||
 				! $TargetModel->hasField('is_translation') ||
@@ -245,7 +288,12 @@ class SaveM17nBehavior extends ModelBehavior {
 				' AND Origin.language_id IN (' . implode(', ', $this->_enableLangs) . ')' .
 				' AND Target.id IS NULL';
 
-		if ($TargetModel->hasField('is_lastest')) {
+		if ($TargetModel->name === 'PagesLanguage') {
+			$pageIds = $this->_getPageIdTop($TargetModel);
+			$sql .=
+				' AND (Origin.page_id IN (' . implode(', ', $pageIds) . ')' .
+					' OR Origin.name = \'\')';
+		} elseif ($TargetModel->hasField('is_lastest')) {
 			$sql .=
 				' AND Origin.is_translation = 1' .
 				' AND Origin.is_lastest = 1';
@@ -254,7 +302,26 @@ class SaveM17nBehavior extends ModelBehavior {
 			$sql .=
 				' AND Origin.is_translation = 1';
 		}
+
 		return $sql;
+	}
+
+/**
+ * page_id_topを取得する
+ *
+ * @param Model $TargetModel 実行するModel
+ * @return array
+ */
+	protected function _getPageIdTop(Model $TargetModel) {
+		$TargetModel->loadModels(['Room' => 'Rooms.Room']);
+		$pageIds = $TargetModel->Room->find('list', array(
+			'recursive' => -1,
+			'fields' => array('Room.page_id_top', 'Room.page_id_top'),
+			'conditions' => array(
+				'Room.page_id_top NOT' => null,
+			),
+		));
+		return $pageIds;
 	}
 
 /**
@@ -266,6 +333,10 @@ class SaveM17nBehavior extends ModelBehavior {
 	protected function _isOriginalCopy(Model $TargetModel) {
 		if (! in_array($TargetModel->tablePrefix . $TargetModel->useTable, $this->_tables)) {
 			return false;
+		}
+
+		if ($TargetModel->name === 'PagesLanguage') {
+			return true;
 		}
 		if (! $TargetModel->hasField('language_id') ||
 				! $TargetModel->hasField('is_origin') ||
