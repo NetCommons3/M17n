@@ -729,10 +729,7 @@ class M17nHelper extends FormHelper {
 		unset($opts['enable']);
 
 		//$enable = array('ja' => true, 'en' => true, 'zh' => true);
-		$opts['options'] = array_intersect_key(self::$languages, $options['enable']);
-		$opts['options'] = array_map(function ($value) {
-			return __d('m17n', $value);
-		}, $opts['options']);
+		$opts['options'] = $this->getLanguagesOptions($options['enable']);
 		$opts['selected'] = $selected;
 		$opts['multiple'] = false;
 		$opts['label'] = $options['label'];
@@ -742,5 +739,19 @@ class M17nHelper extends FormHelper {
 		}
 		$out = $this->Form->input($fieldName, $opts);
 		return $this->output($out);
+	}
+
+/**
+ * 言語ボックスのオプション取得
+ *
+ * @param array $enable 有効な言語
+ * @return array
+ */
+	public function getLanguagesOptions($enable) {
+		$options = array_intersect_key(self::$languages, $enable);
+		$options = array_map(function ($value) {
+			return __d('m17n', $value);
+		}, $options);
+		return $options;
 	}
 }
