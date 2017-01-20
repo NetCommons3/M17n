@@ -37,6 +37,10 @@ App::uses('Plugin', 'PluginManager.Model');
  *			'(Model名)' => array(
  *				'class' => (クラス名: Plugin.Model形式),
  *				'foreignKey' => (外部キー),
+ *				'fieldForIdentifyPlugin' => array( //プラグインを特定するフィールド （例）'AuthorizationKey'
+ *					'field' => (フィールド名),
+ *					'value' => (値)
+ *				),
  *				'isM17n' => 多言語ありかどうか,
  *			)
  *		),
@@ -546,18 +550,20 @@ class M17nBehavior extends ModelBehavior {
 				$id = $options['baseData'][$model->alias]['id'];
 			}
 
-			if ($model->$modelName->hasField('plugin_key')) {
-				$conditions = array(
-					$modelData['foreignKey'] => $id,
-					'plugin_key' => Inflector::underscore($model->plugin)
-				);
-			} else {
-				$conditions = array(
-					$modelData['foreignKey'] => $id,
-				);
+			$tagetModel = $model->$modelName;
+			$conditions = array(
+				$modelData['foreignKey'] => $id,
+			);
+			if ($tagetModel->hasField('plugin_key')) {
+				$conditions['plugin_key'] = Inflector::underscore($model->plugin);
+			}
+			if (Hash::get($modelData, 'fieldForIdentifyPlugin')) {
+				$field = Hash::get($modelData, 'fieldForIdentifyPlugin.field');
+				$value = Hash::get($modelData, 'fieldForIdentifyPlugin.value');
+				$conditions[$field] = $value;
 			}
 
-			$targetDatas = $model->$modelName->find('all', array(
+			$targetDatas = $tagetModel->find('all', array(
 				'recursive' => -1,
 				'callbacks' => false,
 				'conditions' => $conditions,
@@ -566,7 +572,7 @@ class M17nBehavior extends ModelBehavior {
 			$commonFields = Hash::get(
 				$modelData,
 				'commonFields',
-				Hash::get($this->settings, $model->$modelName->name . '.commonFields', array())
+				Hash::get($this->settings, $tagetModel->name . '.commonFields', array())
 			);
 			$associations2 = Hash::get($modelData, 'associations');
 
@@ -578,7 +584,7 @@ class M17nBehavior extends ModelBehavior {
 				'isWorkflow' => Hash::get($options, 'isWorkflow'),
 				'languageId' => Hash::get($options, 'languageId'),
 			);
-			$this->_saveWorkflowAssociations($model->$modelName, $targetDatas, $options2);
+			$this->_saveWorkflowAssociations($tagetModel, $targetDatas, $options2);
 		}
 
 		return true;
@@ -596,12 +602,12 @@ class M17nBehavior extends ModelBehavior {
  *		'isWorkflow' => ワークフローかどうか
  * );
  *
- * @param Model $model 呼び出し元Model※_updateWorkflowAssociations()の$model->$modelName
+ * @param Model $targetModel 呼び出し元Model※_updateWorkflowAssociations()の$tagetModel
  * @param array $targetDatas 対象データ
  * @param array $options オプション
  * @return bool
  */
-	protected function _saveWorkflowAssociations(Model $model, $targetDatas, $options) {
+	protected function _saveWorkflowAssociations(Model $targetModel, $targetDatas, $options) {
 		$associations = Hash::get($options, 'associations');
 		$commonFields = Hash::get($options, 'commonFields');
 		$foreignKey = Hash::get($options, 'foreignKey');
@@ -609,10 +615,10 @@ class M17nBehavior extends ModelBehavior {
 
 		foreach ($targetDatas as $targetData) {
 			$commonUpdate = array();
-			$commonUpdate[$model->alias][$foreignKey] = $associationId;
+			$commonUpdate[$targetModel->alias][$foreignKey] = $associationId;
 			foreach ($commonFields as $field) {
-				$fieldValue = Hash::get($targetData[$model->alias], $field);
-				$commonUpdate[$model->alias][$field] = $fieldValue;
+				$fieldValue = Hash::get($targetData[$targetModel->alias], $field);
+				$commonUpdate[$targetModel->alias][$field] = $fieldValue;
 			}
 
 			//データのコピー処理
@@ -624,7 +630,7 @@ class M17nBehavior extends ModelBehavior {
 				'isWorkflow' => Hash::get($options, 'isWorkflow'),
 				'languageId' => Hash::get($options, 'languageId'),
 			);
-			$this->_saveM17nData($model, [$targetData], $options2);
+			$this->_saveM17nData($targetModel, [$targetData], $options2);
 		}
 	}
 
