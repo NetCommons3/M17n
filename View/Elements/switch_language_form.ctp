@@ -11,24 +11,20 @@
  * @license http://www.netcommons.org/license.txt NetCommons License
  * @copyright Copyright 2014, NetCommons Project
  */
+
+$enable = array_flip(
+	Hash::extract($switchLanguages, '{n}.Language.code')
+);
+$options = $this->M17n->getLanguagesOptions($enable);
 ?>
 
-<?php echo $this->NetCommonsForm->create(false,
-	array(
-		'type' => 'get',
-		'url' => NetCommonsUrl::actionUrl(array('plugin' => 'm17n', 'controller' => 'm17n', 'action' => 'index')),
-	));
-?>
-
-<?php echo $this->M17n->languages('language',
-		array(
-			'label' => false,
-			'default' => Configure::read('Config.language'),
-			'onchange' => 'submit()',
-			'enable' => array_flip(
-				Hash::extract($switchLanguages, '{n}.Language.code')
-			),
-		)
-	); ?>
-
-<?php echo $this->Form->end();
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+	<?php echo Hash::get($options, Configure::read('Config.language')); ?> <span class="caret"></span>
+</a>
+<ul class="dropdown-menu">
+	<?php foreach ($options as $code => $name) : ?>
+		<li>
+			<?php echo $this->NetCommonsHtml->link($name, array('plugin' => 'm17n', 'controller' => 'm17n', 'action' => 'index', '?' => ['language' => $code])); ?>
+		</li>
+	<?php endforeach; ?>
+</ul>
