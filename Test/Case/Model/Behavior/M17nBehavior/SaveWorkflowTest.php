@@ -10,7 +10,7 @@
  */
 
 App::uses('M17nBehaviorSaveTestBase', 'M17n.TestSuite');
-App::uses('TestM17nBehaviorSaveWorkflowFixture', 'M17n.Test/Fixture');
+App::uses('TestM17nBSaveWorkflowFixture', 'M17n.Test/Fixture');
 
 /**
  * M17nBehavior::save()のテスト
@@ -26,7 +26,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
  * @var array
  */
 	public $fixtures = array(
-		'plugin.m17n.test_m17n_behavior_save_workflow',
+		'plugin.m17n.test_m17n_b_save_workflow',
 	);
 
 /**
@@ -53,7 +53,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 
 		//テストプラグインのロード
 		NetCommonsCakeTestCase::loadTestPlugin($this, 'M17n', 'TestM17n');
-		$this->TestModel = ClassRegistry::init('TestM17n.TestM17nBehaviorSaveWorkflow');
+		$this->TestModel = ClassRegistry::init('TestM17n.TestM17nBSaveWorkflow');
 	}
 
 /**
@@ -73,7 +73,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 		$index = 0;
 		$results[$index]['langId'] = '2';
 		$results[$index]['data'] = array(
-			'TestM17nBehaviorSaveWorkflow' => array(
+			'TestM17nBSaveWorkflow' => array(
 				'language_id' => $results[$index]['langId'],
 				'key' => 'add_key_1',
 				'status' => '1',
@@ -83,7 +83,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 			),
 		);
 		$results[$index]['expected'][0] = Hash::merge($results[$index]['data'], array(
-			'TestM17nBehaviorSaveWorkflow' => array(
+			'TestM17nBSaveWorkflow' => array(
 				'is_original_copy' => false,
 				'is_origin' => true,
 				'is_translation' => false,
@@ -95,7 +95,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 		$index = 1;
 		$results[$index]['langId'] = '2';
 		$results[$index]['data'] = array(
-			'TestM17nBehaviorSaveWorkflow' => array(
+			'TestM17nBSaveWorkflow' => array(
 				'language_id' => $results[$index]['langId'],
 				'key' => 'test_1',
 				'status' => '3',
@@ -105,10 +105,10 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 			),
 		);
 		$results[$index]['expected'][0] = array(
-			'TestM17nBehaviorSaveWorkflow' => (new TestM17nBehaviorSaveWorkflowFixture())->records[0]
+			'TestM17nBSaveWorkflow' => (new TestM17nBSaveWorkflowFixture())->records[0]
 		);
 		$results[$index]['expected'][1] = Hash::merge($results[$index]['data'], array(
-			'TestM17nBehaviorSaveWorkflow' => array(
+			'TestM17nBSaveWorkflow' => array(
 				'is_original_copy' => false,
 				'is_origin' => true,
 				'is_translation' => false,
@@ -120,7 +120,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 		$index = 2;
 		$results[$index]['langId'] = '1';
 		$results[$index]['data'] = array(
-			'TestM17nBehaviorSaveWorkflow' => array(
+			'TestM17nBSaveWorkflow' => array(
 				'language_id' => $results[$index]['langId'],
 				'key' => 'test_1',
 				'status' => '1',
@@ -131,16 +131,16 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 		);
 		$results[$index]['expected'][0] = Hash::merge(
 			array(
-				'TestM17nBehaviorSaveWorkflow' => (new TestM17nBehaviorSaveWorkflowFixture())->records[0]
+				'TestM17nBSaveWorkflow' => (new TestM17nBSaveWorkflowFixture())->records[0]
 			),
 			array(
-				'TestM17nBehaviorSaveWorkflow' => array(
+				'TestM17nBSaveWorkflow' => array(
 					'is_translation' => true,
 				),
 			)
 		);
 		$results[$index]['expected'][1] = Hash::merge($results[$index]['data'], array(
-			'TestM17nBehaviorSaveWorkflow' => array(
+			'TestM17nBSaveWorkflow' => array(
 				'is_original_copy' => false,
 				'is_origin' => false,
 				'is_translation' => true,
@@ -152,7 +152,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 		$index = 4;
 		$results[$index]['langId'] = '2';
 		$results[$index]['data'] = array(
-			'TestM17nBehaviorSaveWorkflow' => array(
+			'TestM17nBSaveWorkflow' => array(
 				'language_id' => $results[$index]['langId'],
 				'key' => 'test_3',
 				'status' => '3',
@@ -162,13 +162,13 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 			),
 		);
 		$results[$index]['expected'][0] = array(
-			'TestM17nBehaviorSaveWorkflow' => (new TestM17nBehaviorSaveWorkflowFixture())->records[2]
+			'TestM17nBSaveWorkflow' => (new TestM17nBSaveWorkflowFixture())->records[2]
 		);
 		$results[$index]['expected'][1] = array(
-			'TestM17nBehaviorSaveWorkflow' => (new TestM17nBehaviorSaveWorkflowFixture())->records[3]
+			'TestM17nBSaveWorkflow' => (new TestM17nBSaveWorkflowFixture())->records[3]
 		);
 		$results[$index]['expected'][2] = Hash::merge($results[$index]['data'], array(
-			'TestM17nBehaviorSaveWorkflow' => array(
+			'TestM17nBSaveWorkflow' => array(
 				'is_original_copy' => false,
 				'is_origin' => true,
 				'is_translation' => true,

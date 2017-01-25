@@ -15,7 +15,7 @@
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\Fixture
  */
-class TestM17nBehaviorSaveWorkflowFixture extends CakeTestFixture {
+class TestM17nBSaveWorkflowCateIdFixture extends CakeTestFixture {
 
 /**
  * Fields
@@ -25,6 +25,7 @@ class TestM17nBehaviorSaveWorkflowFixture extends CakeTestFixture {
 	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'comment' => ''),
 		'language_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 6, 'unsigned' => false),
+		'category_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => 'カテゴリーID'),
 		'key' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '', 'charset' => 'utf8'),
 		'status' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 4, 'unsigned' => false, 'comment' => ''),
 		'is_active' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'comment' => ''),
@@ -49,10 +50,11 @@ class TestM17nBehaviorSaveWorkflowFixture extends CakeTestFixture {
  * @var array
  */
 	public $records = array(
-		//日本語のみ
+		//日本語のみ、カテゴリID=1
 		array(
 			'id' => '1',
 			'language_id' => '2',
+			'category_id' => null,
 			'key' => 'test_1',
 			'status' => '1',
 			'is_active' => true,
@@ -70,6 +72,7 @@ class TestM17nBehaviorSaveWorkflowFixture extends CakeTestFixture {
 		array(
 			'id' => '2',
 			'language_id' => '1',
+			'category_id' => null,
 			'key' => 'test_2',
 			'status' => '1',
 			'is_active' => true,
@@ -87,6 +90,7 @@ class TestM17nBehaviorSaveWorkflowFixture extends CakeTestFixture {
 		array(
 			'id' => '3',
 			'language_id' => '2',
+			'category_id' => null,
 			'key' => 'test_3',
 			'status' => '1',
 			'is_active' => true,
@@ -103,6 +107,7 @@ class TestM17nBehaviorSaveWorkflowFixture extends CakeTestFixture {
 		array(
 			'id' => '4',
 			'language_id' => '1',
+			'category_id' => null,
 			'key' => 'test_3',
 			'status' => '1',
 			'is_active' => true,
@@ -111,6 +116,24 @@ class TestM17nBehaviorSaveWorkflowFixture extends CakeTestFixture {
 			'is_translation' => true,
 			'is_original_copy' => false,
 			'content' => 'Test 3',
+			'created_user' => '1',
+			'created' => '2017-01-25 00:00:00',
+			'modified_user' => '1',
+			'modified' => '2017-01-25 00:00:00'
+		),
+		//日本語のみ、カテゴリID=1
+		array(
+			'id' => '5',
+			'language_id' => '2',
+			'category_id' => '1',
+			'key' => 'test_4',
+			'status' => '1',
+			'is_active' => true,
+			'is_latest' => true,
+			'is_origin' => true,
+			'is_translation' => false,
+			'is_original_copy' => false,
+			'content' => 'Test 1',
 			'created_user' => '1',
 			'created' => '2017-01-25 00:00:00',
 			'modified_user' => '1',

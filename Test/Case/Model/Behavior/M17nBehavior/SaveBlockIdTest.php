@@ -10,7 +10,7 @@
  */
 
 App::uses('M17nBehaviorSaveTestBase', 'M17n.TestSuite');
-App::uses('TestM17nBehaviorSaveBlockIdFixture', 'M17n.Test/Fixture');
+App::uses('TestM17nBSaveBlockIdFixture', 'M17n.Test/Fixture');
 
 /**
  * M17nBehavior::save()のテスト
@@ -26,7 +26,7 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
  * @var array
  */
 	public $fixtures = array(
-		'plugin.m17n.test_m17n_behavior_save_block_id',
+		'plugin.m17n.test_m17n_b_save_block_id',
 	);
 
 /**
@@ -53,7 +53,7 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 
 		//テストプラグインのロード
 		NetCommonsCakeTestCase::loadTestPlugin($this, 'M17n', 'TestM17n');
-		$this->TestModel = ClassRegistry::init('TestM17n.TestM17nBehaviorSaveBlockId');
+		$this->TestModel = ClassRegistry::init('TestM17n.TestM17nBSaveBlockId');
 	}
 
 /**
@@ -73,14 +73,14 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 		$index = 0;
 		$results[$index]['langId'] = '2';
 		$results[$index]['data'] = array(
-			'TestM17nBehaviorSaveBlockId' => array(
+			'TestM17nBSaveBlockId' => array(
 				'language_id' => $results[$index]['langId'],
 				'block_id' => '99',
 				'content' => 'Test add 1',
 			),
 		);
 		$results[$index]['expected'][0] = Hash::merge($results[$index]['data'], array(
-			'TestM17nBehaviorSaveBlockId' => array(
+			'TestM17nBSaveBlockId' => array(
 				'is_original_copy' => false,
 				'is_origin' => true,
 				'is_translation' => false,
@@ -92,7 +92,7 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 		$index = 1;
 		$results[$index]['langId'] = '2';
 		$results[$index]['data'] = array(
-			'TestM17nBehaviorSaveBlockId' => array(
+			'TestM17nBSaveBlockId' => array(
 				'id' => '1',
 				'language_id' => $results[$index]['langId'],
 				'block_id' => '1',
@@ -100,12 +100,12 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 			),
 		);
 		$results[$index]['expected'][0] = Hash::merge($results[$index]['data'], array(
-			'TestM17nBehaviorSaveBlockId' => array(
+			'TestM17nBSaveBlockId' => array(
 				'is_original_copy' => false,
 				'is_origin' => true,
 				'is_translation' => false,
-				'created' => (new TestM17nBehaviorSaveBlockIdFixture())->records[0]['created'],
-				'created_user' => (new TestM17nBehaviorSaveBlockIdFixture())->records[0]['created_user'],
+				'created' => (new TestM17nBSaveBlockIdFixture())->records[0]['created'],
+				'created_user' => (new TestM17nBSaveBlockIdFixture())->records[0]['created_user'],
 			),
 		));
 
@@ -113,7 +113,7 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 		$index = 2;
 		$results[$index]['langId'] = '1';
 		$results[$index]['data'] = array(
-			'TestM17nBehaviorSaveBlockId' => array(
+			'TestM17nBSaveBlockId' => array(
 				'id' => '1',
 				'language_id' => $results[$index]['langId'],
 				'block_id' => '1',
@@ -122,16 +122,16 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 		);
 		$results[$index]['expected'][0] = Hash::merge(
 			array(
-				'TestM17nBehaviorSaveBlockId' => (new TestM17nBehaviorSaveBlockIdFixture())->records[0]
+				'TestM17nBSaveBlockId' => (new TestM17nBSaveBlockIdFixture())->records[0]
 			),
 			array(
-				'TestM17nBehaviorSaveBlockId' => array(
+				'TestM17nBSaveBlockId' => array(
 					'is_translation' => true,
 				),
 			)
 		);
 		$results[$index]['expected'][1] = Hash::merge($results[$index]['data'], array(
-			'TestM17nBehaviorSaveBlockId' => array(
+			'TestM17nBSaveBlockId' => array(
 				'is_original_copy' => false,
 				'is_origin' => false,
 				'is_translation' => true,
@@ -143,7 +143,7 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 		$index = 4;
 		$results[$index]['langId'] = '2';
 		$results[$index]['data'] = array(
-			'TestM17nBehaviorSaveBlockId' => array(
+			'TestM17nBSaveBlockId' => array(
 				'id' => '3',
 				'language_id' => $results[$index]['langId'],
 				'block_id' => '3',
@@ -151,16 +151,16 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 			),
 		);
 		$results[$index]['expected'][0] = Hash::merge($results[$index]['data'], array(
-			'TestM17nBehaviorSaveBlockId' => array(
+			'TestM17nBSaveBlockId' => array(
 				'is_original_copy' => false,
 				'is_origin' => true,
 				'is_translation' => true,
-				'created' => (new TestM17nBehaviorSaveBlockIdFixture())->records[2]['created'],
-				'created_user' => (new TestM17nBehaviorSaveBlockIdFixture())->records[2]['created_user'],
+				'created' => (new TestM17nBSaveBlockIdFixture())->records[2]['created'],
+				'created_user' => (new TestM17nBSaveBlockIdFixture())->records[2]['created_user'],
 			),
 		));
 		$results[$index]['expected'][1] = array(
-			'TestM17nBehaviorSaveBlockId' => (new TestM17nBehaviorSaveBlockIdFixture())->records[3]
+			'TestM17nBSaveBlockId' => (new TestM17nBSaveBlockIdFixture())->records[3]
 		);
 
 		return $results;

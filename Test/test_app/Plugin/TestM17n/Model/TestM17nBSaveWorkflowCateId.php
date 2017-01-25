@@ -17,7 +17,7 @@ App::uses('AppModel', 'Model');
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\test_app\Plugin\TestM17n\Model
  */
-class TestM17nBehaviorSaveBlockId extends AppModel {
+class TestM17nBSaveWorkflowCateId extends AppModel {
 
 /**
  * 使用ビヘイビア
@@ -26,8 +26,8 @@ class TestM17nBehaviorSaveBlockId extends AppModel {
  */
 	public $actsAs = array(
 		'M17n.M17n' => array(
-			'keyField' => 'block_id'
-		)
+			'commonFields' => array('category_id')
+		),
 	);
 
 }

@@ -400,6 +400,9 @@ class M17nBehavior extends ModelBehavior {
 				$fieldValue = Hash::get($model->data[$model->alias], $field);
 
 				$conditions[$model->alias . '.' . $field . ' !='] = $fieldValue;
+				if ($fieldValue) {
+					$conditions[$model->alias . '.' . $field . ''] = null;
+				}
 				$commonUpdate[$model->alias][$field] = $fieldValue;
 			}
 		}
@@ -408,6 +411,7 @@ class M17nBehavior extends ModelBehavior {
 		if (! $this->settings[$model->name]['associations']) {
 			$targetConditions['OR'] = $conditions;
 		}
+
 		$targetDatas = $model->find('all', array(
 			'recursive' => -1,
 			'callbacks' => false,

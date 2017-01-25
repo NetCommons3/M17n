@@ -15,7 +15,7 @@
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\Fixture
  */
-class TestM17nBehaviorSaveFixture extends CakeTestFixture {
+class TestM17nBSaveWorkflowFixture extends CakeTestFixture {
 
 /**
  * Fields
@@ -26,6 +26,9 @@ class TestM17nBehaviorSaveFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'comment' => ''),
 		'language_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 6, 'unsigned' => false),
 		'key' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '', 'charset' => 'utf8'),
+		'status' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 4, 'unsigned' => false, 'comment' => ''),
+		'is_active' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'comment' => ''),
+		'is_latest' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'comment' => ''),
 		'is_origin' => array('type' => 'boolean', 'null' => false, 'default' => '1'),
 		'is_translation' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'is_original_copy' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'comment' => 'オリジナルのコピー。言語を新たに追加したときに使用する'),
@@ -51,6 +54,9 @@ class TestM17nBehaviorSaveFixture extends CakeTestFixture {
 			'id' => '1',
 			'language_id' => '2',
 			'key' => 'test_1',
+			'status' => '1',
+			'is_active' => true,
+			'is_latest' => true,
 			'is_origin' => true,
 			'is_translation' => false,
 			'is_original_copy' => false,
@@ -65,6 +71,9 @@ class TestM17nBehaviorSaveFixture extends CakeTestFixture {
 			'id' => '2',
 			'language_id' => '1',
 			'key' => 'test_2',
+			'status' => '1',
+			'is_active' => true,
+			'is_latest' => true,
 			'is_origin' => true,
 			'is_translation' => false,
 			'is_original_copy' => false,
@@ -79,6 +88,9 @@ class TestM17nBehaviorSaveFixture extends CakeTestFixture {
 			'id' => '3',
 			'language_id' => '2',
 			'key' => 'test_3',
+			'status' => '1',
+			'is_active' => true,
+			'is_latest' => true,
 			'is_origin' => true,
 			'is_translation' => true,
 			'is_original_copy' => false,
@@ -92,6 +104,9 @@ class TestM17nBehaviorSaveFixture extends CakeTestFixture {
 			'id' => '4',
 			'language_id' => '1',
 			'key' => 'test_3',
+			'status' => '1',
+			'is_active' => true,
+			'is_latest' => true,
 			'is_origin' => false,
 			'is_translation' => true,
 			'is_original_copy' => false,

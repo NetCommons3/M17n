@@ -69,10 +69,11 @@ class M17nBehaviorSaveTestBase extends M17nModelTestCase {
 		$result = $this->TestModel->save($data);
 		$this->assertNotEmpty($result);
 
+		$alias = $this->TestModel->alias;
 		$actual = $this->TestModel->find('all', array(
 			'recursive' => 1,
 			'conditions' => array(
-				$this->TestModel->alias . '.' . $this->fieldKey => $data[$this->TestModel->alias][$this->fieldKey]
+				$alias . '.' . $this->fieldKey => $data[$alias][$this->fieldKey]
 			)
 		));
 		$actual = $this->_parseActual($actual, $expected);

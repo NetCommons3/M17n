@@ -15,7 +15,7 @@
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\Fixture
  */
-class TestM17nBehaviorSaveBlockIdFixture extends CakeTestFixture {
+class TestM17nBSaveFixture extends CakeTestFixture {
 
 /**
  * Fields
@@ -25,7 +25,7 @@ class TestM17nBehaviorSaveBlockIdFixture extends CakeTestFixture {
 	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'comment' => ''),
 		'language_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 6, 'unsigned' => false),
-		'block_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
+		'key' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '', 'charset' => 'utf8'),
 		'is_origin' => array('type' => 'boolean', 'null' => false, 'default' => '1'),
 		'is_translation' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'is_original_copy' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'comment' => 'オリジナルのコピー。言語を新たに追加したときに使用する'),
@@ -50,7 +50,7 @@ class TestM17nBehaviorSaveBlockIdFixture extends CakeTestFixture {
 		array(
 			'id' => '1',
 			'language_id' => '2',
-			'block_id' => '1',
+			'key' => 'test_1',
 			'is_origin' => true,
 			'is_translation' => false,
 			'is_original_copy' => false,
@@ -64,7 +64,7 @@ class TestM17nBehaviorSaveBlockIdFixture extends CakeTestFixture {
 		array(
 			'id' => '2',
 			'language_id' => '1',
-			'block_id' => '2',
+			'key' => 'test_2',
 			'is_origin' => true,
 			'is_translation' => false,
 			'is_original_copy' => false,
@@ -78,7 +78,7 @@ class TestM17nBehaviorSaveBlockIdFixture extends CakeTestFixture {
 		array(
 			'id' => '3',
 			'language_id' => '2',
-			'block_id' => '3',
+			'key' => 'test_3',
 			'is_origin' => true,
 			'is_translation' => true,
 			'is_original_copy' => false,
@@ -91,7 +91,7 @@ class TestM17nBehaviorSaveBlockIdFixture extends CakeTestFixture {
 		array(
 			'id' => '4',
 			'language_id' => '1',
-			'block_id' => '3',
+			'key' => 'test_3',
 			'is_origin' => false,
 			'is_translation' => true,
 			'is_original_copy' => false,
