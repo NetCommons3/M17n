@@ -18,7 +18,7 @@ App::uses('TestM17nWorkflowFixture', 'M17n.Test/Fixture');
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\Case\Model\Behavior\M17nBehavior
  */
-class M17nBehaviorSaveTest extends M17nModelTestCase {
+class M17nBehaviorSaveWorkflowTest extends M17nModelTestCase {
 
 /**
  * Fixtures
