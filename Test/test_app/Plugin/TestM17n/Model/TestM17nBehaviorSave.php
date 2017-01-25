@@ -1,6 +1,6 @@
 <?php
 /**
- * M17nBehaviorテスト用Model
+ * M17nBehavior::save()テスト用Model
  *
  * @author Noriko Arai <arai@nii.ac.jp>
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
@@ -12,12 +12,12 @@
 App::uses('AppModel', 'Model');
 
 /**
- * M17nBehaviorテスト用Model
+ * M17nBehavior::save()テスト用Model
  *
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\test_app\Plugin\TestM17n\Model
  */
-class TestM17nWorkflow extends AppModel {
+class TestM17nBehaviorSave extends AppModel {
 
 /**
  * 使用ビヘイビア

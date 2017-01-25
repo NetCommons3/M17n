@@ -15,7 +15,7 @@
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\Fixture
  */
-class TestM17nWorkflowFixture extends CakeTestFixture {
+class TestM17nBehaviorSaveWorkflowFixture extends CakeTestFixture {
 
 /**
  * Fields
@@ -102,7 +102,7 @@ class TestM17nWorkflowFixture extends CakeTestFixture {
 		),
 		array(
 			'id' => '4',
-			'language_id' => '5',
+			'language_id' => '1',
 			'key' => 'test_3',
 			'status' => '1',
 			'is_active' => true,
