@@ -15,6 +15,8 @@ App::uses('TestM17nBSaveFixture', 'M17n.Test/Fixture');
 /**
  * M17nBehavior::save()のテスト
  *
+ * Workflow以外のテスト
+ *
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\Case\Model\Behavior\M17nBehavior
  */
@@ -87,6 +89,7 @@ class M17nBehaviorSaveTest extends M17nBehaviorSaveTestBase {
 				'id' => '5',
 			),
 		));
+		$results[$index]['prepare'] = array();
 
 		// * 1.「日本語のみ」のデータを日本語で編集
 		$index = 1;
@@ -108,6 +111,7 @@ class M17nBehaviorSaveTest extends M17nBehaviorSaveTestBase {
 				'created_user' => (new TestM17nBSaveFixture())->records[0]['created_user'],
 			),
 		));
+		$results[$index]['prepare'] = array();
 
 		// * 2.「日本語のみ」のデータを英語で編集
 		$index = 2;
@@ -138,6 +142,7 @@ class M17nBehaviorSaveTest extends M17nBehaviorSaveTestBase {
 				'id' => '5',
 			),
 		));
+		$results[$index]['prepare'] = array();
 
 		// * 4.「日本語、英語」のデータを日本語で編集
 		$index = 4;
@@ -162,6 +167,7 @@ class M17nBehaviorSaveTest extends M17nBehaviorSaveTestBase {
 		$results[$index]['expected'][1] = array(
 			'TestM17nBSave' => (new TestM17nBSaveFixture())->records[3]
 		);
+		$results[$index]['prepare'] = array();
 
 		return $results;
 	}

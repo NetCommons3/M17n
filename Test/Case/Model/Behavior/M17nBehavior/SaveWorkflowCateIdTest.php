@@ -15,10 +15,12 @@ App::uses('TestM17nBSaveWorkflowCateIdFixture', 'M17n.Test/Fixture');
 /**
  * M17nBehavior::save()のテスト
  *
+ * FAQなど、カテゴリーを利用しているプラグイン
+ *
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\Case\Model\Behavior\M17nBehavior
  */
-class SaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
+class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 
 /**
  * Fixtures
@@ -91,6 +93,7 @@ class SaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 				'id' => '6',
 			),
 		));
+		$results[$index]['prepare'] = array();
 
 		// * 1.「日本語のみ」のデータを日本語でコンテンツのみ編集
 		$index = 1;
@@ -117,6 +120,7 @@ class SaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 				'id' => '6',
 			),
 		));
+		$results[$index]['prepare'] = array();
 
 		// * 2.「日本語のみ」のデータを英語でコンテンツのみ編集
 		$index = 2;
@@ -150,6 +154,7 @@ class SaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 				'id' => '6',
 			),
 		));
+		$results[$index]['prepare'] = array();
 
 		// * 4.「日本語、英語」のデータを日本語でコンテンツのみ編集
 		$index = 4;
@@ -179,6 +184,7 @@ class SaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 				'id' => '6',
 			),
 		));
+		$results[$index]['prepare'] = array();
 
 		// * 5.「日本語のみ」のデータを日本語でカテゴリIDとコンテンツを編集
 		$index = 5;
@@ -205,6 +211,7 @@ class SaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 				'id' => '6',
 			),
 		));
+		$results[$index]['prepare'] = array();
 
 		// * 6.「日本語のみ」のデータを英語でカテゴリーIDとコンテンツを編集
 		$index = 6;
@@ -254,6 +261,7 @@ class SaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 				),
 			)
 		);
+		$results[$index]['prepare'] = array();
 
 		return $results;
 	}

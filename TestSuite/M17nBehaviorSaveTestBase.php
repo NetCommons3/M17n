@@ -58,11 +58,19 @@ class M17nBehaviorSaveTestBase extends M17nModelTestCase {
  * @param int $langId 言語ID
  * @param array $data 登録データ
  * @param array $expected 期待値
+ * @param array $prepare 関連するデータ作成
  * @dataProvider dataProvider
  * @return void
  */
-	public function testSave($langId, $data, $expected) {
+	public function testSave($langId, $data, $expected, $prepare) {
 		//テストデータセット
+		foreach ($prepare as $modelName => $preDatas) {
+			$model = ClassRegistry::init($modelName);
+			foreach ($preDatas as $preData) {
+				$model->create(false);
+				$result = $model->save($preData, ['validate' => false, 'callbacks' => false]);
+			}
+		}
 		Current::write('Language.id', $langId);
 
 		//テスト実施
