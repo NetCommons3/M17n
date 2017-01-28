@@ -150,7 +150,7 @@ class M17nBehavior extends ModelBehavior {
  * @param Model $model 呼び出し元Model
  * @return bool
  */
-	public function isM7nGeneralPlugin(Model $model) {
+	public function isM17nGeneralPlugin(Model $model) {
 		if (! $model->hasField('language_id')) {
 			return false;
 		}
@@ -185,7 +185,7 @@ class M17nBehavior extends ModelBehavior {
 			return true;
 		}
 
-		if (! $this->isM7nGeneralPlugin($model)) {
+		if (! $this->isM17nGeneralPlugin($model)) {
 			return true;
 		}
 
@@ -279,7 +279,7 @@ class M17nBehavior extends ModelBehavior {
 			return parent::afterSave($model, $created, $options);
 		}
 
-		if (! $this->isM7nGeneralPlugin($model)) {
+		if (! $this->isM17nGeneralPlugin($model)) {
 			return true;
 		}
 

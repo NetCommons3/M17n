@@ -11,6 +11,7 @@
 
 //@codeCoverageIgnoreStart;
 App::uses('M17nModelTestCase', 'M17n.TestSuite');
+App::uses('Current', 'NetCommons.Utility');
 //@codeCoverageIgnoreEnd;
 
 /**
@@ -53,16 +54,50 @@ class M17nBehaviorSaveTestBase extends M17nModelTestCase {
 	}
 
 /**
+ * setUp method
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+
+		//テストプラグインのロード
+		$roomId = '2';
+		Current::$current = Hash::insert(Current::$current, 'Room.id', $roomId);
+		$path = $roomId . '.Permission.content_publishable.value';
+		Current::$permission = Hash::insert(Current::$permission, $path, true);
+	}
+
+/**
+ * tearDown method
+ *
+ * @return void
+ */
+	public function tearDown() {
+		Current::$current = array();
+		Current::$permission = array();
+		parent::tearDown();
+	}
+
+/**
  * save()のテスト
  *
  * @param int $langId 言語ID
  * @param array $data 登録データ
  * @param array $expected 期待値
+ * @param array $prepare 関連するデータ作成
  * @dataProvider dataProvider
  * @return void
  */
-	public function testSave($langId, $data, $expected) {
+	public function testSave($langId, $data, $expected, $prepare) {
 		//テストデータセット
+		foreach ($prepare as $modelName => $preDatas) {
+			$model = ClassRegistry::init($modelName);
+			foreach ($preDatas as $preData) {
+				$model->create(false);
+				$result = $model->save($preData, ['validate' => false, 'callbacks' => false]);
+			}
+		}
 		Current::write('Language.id', $langId);
 
 		//テスト実施

@@ -25,6 +25,7 @@ class TestM17nBSaveWorkflow extends AppModel {
  * @var array
  */
 	public $actsAs = array(
+		'Workflow.Workflow',
 		'M17n.M17n'
 	);
 
