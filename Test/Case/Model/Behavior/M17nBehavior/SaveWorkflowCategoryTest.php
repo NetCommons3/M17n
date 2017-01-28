@@ -10,7 +10,7 @@
  */
 
 App::uses('M17nBehaviorSaveTestBase', 'M17n.TestSuite');
-App::uses('TestM17nBSaveWorkflowCateIdFixture', 'M17n.Test/Fixture');
+App::uses('TestM17nBSaveWorkflowCategoryFixture', 'M17n.Test/Fixture');
 
 /**
  * M17nBehavior::save()のテスト
@@ -30,7 +30,7 @@ App::uses('TestM17nBSaveWorkflowCateIdFixture', 'M17n.Test/Fixture');
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\Case\Model\Behavior\M17nBehavior
  */
-class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
+class M17nBehaviorSaveWorkflowCategoryTest extends M17nBehaviorSaveTestBase {
 
 /**
  * Fixtures
@@ -38,7 +38,7 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
  * @var array
  */
 	public $fixtures = array(
-		'plugin.m17n.test_m17n_b_save_workflow_cate_id',
+		'plugin.m17n.test_m17n_b_save_workflow_category',
 	);
 
 /**
@@ -65,7 +65,7 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 
 		//テストプラグインのロード
 		NetCommonsCakeTestCase::loadTestPlugin($this, 'M17n', 'TestM17n');
-		$this->TestModel = ClassRegistry::init('TestM17n.TestM17nBSaveWorkflowCateId');
+		$this->TestModel = ClassRegistry::init('TestM17n.TestM17nBSaveWorkflowCategory');
 	}
 
 /**
@@ -150,7 +150,7 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 
 		if ($testNo === 0) {
 			$data = array(
-				'TestM17nBSaveWorkflowCateId' => array(
+				'TestM17nBSaveWorkflowCategory' => array(
 					'language_id' => $langId,
 					'category_id' => null,
 					'key' => 'add_key_1',
@@ -160,7 +160,7 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 			);
 		} elseif ($testNo === 1) {
 			$data = array(
-				'TestM17nBSaveWorkflowCateId' => array(
+				'TestM17nBSaveWorkflowCategory' => array(
 					'language_id' => $langId,
 					'category_id' => null,
 					'key' => 'test_1',
@@ -170,7 +170,7 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 			);
 		} elseif ($testNo === 2) {
 			$data = array(
-				'TestM17nBSaveWorkflowCateId' => array(
+				'TestM17nBSaveWorkflowCategory' => array(
 					'language_id' => $langId,
 					'category_id' => null,
 					'key' => 'test_1',
@@ -180,7 +180,7 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 			);
 		} elseif ($testNo === 3) {
 			$data = array(
-				'TestM17nBSaveWorkflowCateId' => array(
+				'TestM17nBSaveWorkflowCategory' => array(
 					'language_id' => $langId,
 					'category_id' => null,
 					'key' => 'test_3',
@@ -190,7 +190,7 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 			);
 		} elseif (in_array($testNo, [4, 5], true)) {
 			$data = array(
-				'TestM17nBSaveWorkflowCateId' => array(
+				'TestM17nBSaveWorkflowCategory' => array(
 					'language_id' => $langId,
 					'category_id' => '2',
 					'key' => 'test_1',
@@ -218,7 +218,7 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 			$expected[0] = Hash::merge(
 				$this->__getData($testNo, $langId),
 				array(
-					'TestM17nBSaveWorkflowCateId' => array(
+					'TestM17nBSaveWorkflowCategory' => array(
 						'is_active' => true,
 						'is_latest' => true,
 						'is_original_copy' => false,
@@ -231,10 +231,10 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 		} elseif ($testNo === 1) {
 			$expected[0] = Hash::merge(
 				array(
-					'TestM17nBSaveWorkflowCateId' => (new TestM17nBSaveWorkflowCateIdFixture())->records[0]
+					'TestM17nBSaveWorkflowCategory' => (new TestM17nBSaveWorkflowCategoryFixture())->records[0]
 				),
 				array(
-					'TestM17nBSaveWorkflowCateId' => array(
+					'TestM17nBSaveWorkflowCategory' => array(
 						'is_latest' => false,
 					)
 				)
@@ -242,7 +242,7 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 			$expected[1] = Hash::merge(
 				$this->__getData($testNo, $langId),
 				array(
-					'TestM17nBSaveWorkflowCateId' => array(
+					'TestM17nBSaveWorkflowCategory' => array(
 						'is_active' => false,
 						'is_latest' => true,
 						'is_original_copy' => false,
@@ -255,10 +255,10 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 		} elseif ($testNo === 2) {
 			$expected[0] = Hash::merge(
 				array(
-					'TestM17nBSaveWorkflowCateId' => (new TestM17nBSaveWorkflowCateIdFixture())->records[0]
+					'TestM17nBSaveWorkflowCategory' => (new TestM17nBSaveWorkflowCategoryFixture())->records[0]
 				),
 				array(
-					'TestM17nBSaveWorkflowCateId' => array(
+					'TestM17nBSaveWorkflowCategory' => array(
 						'is_active' => true,
 						'is_latest' => true,
 						'is_translation' => true,
@@ -268,7 +268,7 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 			$expected[1] = Hash::merge(
 				$this->__getData($testNo, $langId),
 				array(
-					'TestM17nBSaveWorkflowCateId' => array(
+					'TestM17nBSaveWorkflowCategory' => array(
 						'is_active' => true,
 						'is_latest' => true,
 						'is_original_copy' => false,
@@ -281,10 +281,10 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 		} elseif ($testNo === 3) {
 			$expected[0] = Hash::merge(
 				array(
-					'TestM17nBSaveWorkflowCateId' => (new TestM17nBSaveWorkflowCateIdFixture())->records[2]
+					'TestM17nBSaveWorkflowCategory' => (new TestM17nBSaveWorkflowCategoryFixture())->records[2]
 				),
 				array(
-					'TestM17nBSaveWorkflowCateId' => array(
+					'TestM17nBSaveWorkflowCategory' => array(
 						'is_active' => true,
 						'is_latest' => false,
 					)
@@ -292,14 +292,14 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 			);
 			$expected[1] = Hash::merge(
 				array(
-					'TestM17nBSaveWorkflowCateId' => (new TestM17nBSaveWorkflowCateIdFixture())->records[3]
+					'TestM17nBSaveWorkflowCategory' => (new TestM17nBSaveWorkflowCategoryFixture())->records[3]
 				),
 				array()
 			);
 			$expected[2] = Hash::merge(
 				$this->__getData($testNo, $langId),
 				array(
-					'TestM17nBSaveWorkflowCateId' => array(
+					'TestM17nBSaveWorkflowCategory' => array(
 						'is_active' => false,
 						'is_latest' => true,
 						'is_original_copy' => false,
@@ -312,10 +312,10 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 		} elseif ($testNo === 4) {
 			$expected[0] = Hash::merge(
 				array(
-					'TestM17nBSaveWorkflowCateId' => (new TestM17nBSaveWorkflowCateIdFixture())->records[0]
+					'TestM17nBSaveWorkflowCategory' => (new TestM17nBSaveWorkflowCategoryFixture())->records[0]
 				),
 				array(
-					'TestM17nBSaveWorkflowCateId' => array(
+					'TestM17nBSaveWorkflowCategory' => array(
 						'is_active' => true,
 						'is_latest' => false,
 					)
@@ -324,7 +324,7 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 			$expected[1] = Hash::merge(
 				$this->__getData($testNo, $langId),
 				array(
-					'TestM17nBSaveWorkflowCateId' => array(
+					'TestM17nBSaveWorkflowCategory' => array(
 						'is_active' => false,
 						'is_latest' => true,
 						'is_original_copy' => false,
@@ -337,10 +337,10 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 		} elseif ($testNo === 5) {
 			$expected[0] = Hash::merge(
 				array(
-					'TestM17nBSaveWorkflowCateId' => (new TestM17nBSaveWorkflowCateIdFixture())->records[0]
+					'TestM17nBSaveWorkflowCategory' => (new TestM17nBSaveWorkflowCategoryFixture())->records[0]
 				),
 				array(
-					'TestM17nBSaveWorkflowCateId' => array(
+					'TestM17nBSaveWorkflowCategory' => array(
 						'is_translation' => true,
 						'is_active' => false,
 						'is_latest' => false,
@@ -350,7 +350,7 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 			$expected[1] = Hash::merge(
 				$this->__getData($testNo, $langId),
 				array(
-					'TestM17nBSaveWorkflowCateId' => array(
+					'TestM17nBSaveWorkflowCategory' => array(
 						'category_id' => '2',
 						'is_active' => false,
 						'is_latest' => true,
@@ -363,10 +363,10 @@ class M17nBehaviorSaveWorkflowCateIdTest extends M17nBehaviorSaveTestBase {
 			);
 			$expected[2] = Hash::merge(
 				array(
-					'TestM17nBSaveWorkflowCateId' => (new TestM17nBSaveWorkflowCateIdFixture())->records[0]
+					'TestM17nBSaveWorkflowCategory' => (new TestM17nBSaveWorkflowCategoryFixture())->records[0]
 				),
 				array(
-					'TestM17nBSaveWorkflowCateId' => array(
+					'TestM17nBSaveWorkflowCategory' => array(
 						'category_id' => '2',
 						'is_active' => true,
 						'is_latest' => true,
