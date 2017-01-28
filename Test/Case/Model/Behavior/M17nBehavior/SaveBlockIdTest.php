@@ -93,28 +93,28 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 		$results[$testNo]['langId'] = '2';
 		$results[$testNo]['data'] = $this->__getData($testNo, $results[$testNo]['langId']);
 		$results[$testNo]['expected'] = $this->__getExpected($testNo, $results[$testNo]['langId']);
-		$results[$testNo]['prepare'] = array();
+		$results[$testNo]['prepare'] = $this->__getPrepare($testNo);
 
 		// * 1.「日本語のみ」のデータを日本語で編集
 		$testNo = 1;
 		$results[$testNo]['langId'] = '2';
 		$results[$testNo]['data'] = $this->__getData($testNo, $results[$testNo]['langId']);
 		$results[$testNo]['expected'] = $this->__getExpected($testNo, $results[$testNo]['langId']);
-		$results[$testNo]['prepare'] = array();
+		$results[$testNo]['prepare'] = $this->__getPrepare($testNo);
 
 		// * 2.「日本語のみ」のデータを英語で編集
 		$testNo = 2;
 		$results[$testNo]['langId'] = '1';
 		$results[$testNo]['data'] = $this->__getData($testNo, $results[$testNo]['langId']);
 		$results[$testNo]['expected'] = $this->__getExpected($testNo, $results[$testNo]['langId']);
-		$results[$testNo]['prepare'] = array();
+		$results[$testNo]['prepare'] = $this->__getPrepare($testNo);
 
 		// * 3.「日本語、英語」のデータを日本語で編集
 		$testNo = 3;
 		$results[$testNo]['langId'] = '2';
 		$results[$testNo]['data'] = $this->__getData($testNo, $results[$testNo]['langId']);
 		$results[$testNo]['expected'] = $this->__getExpected($testNo, $results[$testNo]['langId']);
-		$results[$testNo]['prepare'] = array();
+		$results[$testNo]['prepare'] = $this->__getPrepare($testNo);
 
 		return $results;
 	}
@@ -131,6 +131,7 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 		$data = array();
 
 		if ($testNo === 0) {
+			// * 0.コンテンツ新規登録
 			$data = array(
 				'TestM17nBSaveBlockId' => array(
 					'language_id' => $langId,
@@ -139,6 +140,8 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 				),
 			);
 		} elseif (in_array($testNo, [1, 2], true)) {
+			// * 1.「日本語のみ」のデータを日本語で編集
+			// * 2.「日本語のみ」のデータを英語で編集
 			$data = array(
 				'TestM17nBSaveBlockId' => array(
 					'id' => '1',
@@ -148,6 +151,7 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 				),
 			);
 		} elseif ($testNo === 3) {
+			// * 3.「日本語、英語」のデータを日本語で編集
 			$data = array(
 				'TestM17nBSaveBlockId' => array(
 					'id' => '3',
@@ -173,6 +177,7 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 		$expected = array();
 
 		if ($testNo === 0) {
+			// * 0.コンテンツ新規登録
 			$expected[0] = Hash::merge(
 				$this->__getData($testNo, $langId),
 				array(
@@ -185,6 +190,7 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 				)
 			);
 		} elseif ($testNo === 1) {
+			// * 1.「日本語のみ」のデータを日本語で編集
 			$expected[0] = Hash::merge(
 				$this->__getData($testNo, $langId),
 				array(
@@ -198,14 +204,13 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 				)
 			);
 		} elseif ($testNo === 2) {
-			$expected[0] = Hash::merge(
-				array(
-					'TestM17nBSaveBlockId' => (new TestM17nBSaveBlockIdFixture())->records[0]
-				),
-				array(
-					'TestM17nBSaveBlockId' => array(
+			// * 2.「日本語のみ」のデータを英語で編集
+			$expected[0] = array(
+				'TestM17nBSaveWorkflowCategory' => Hash::merge(
+					(new TestM17nBSaveBlockIdFixture())->records[0],
+					array(
 						'is_translation' => true,
-					),
+					)
 				)
 			);
 			$expected[1] = Hash::merge(
@@ -220,6 +225,7 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 				)
 			);
 		} elseif ($testNo === 3) {
+			// * 3.「日本語、英語」のデータを日本語で編集
 			$expected[0] = Hash::merge(
 				$this->__getData($testNo, $langId),
 				array(
@@ -238,6 +244,17 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 		}
 
 		return $expected;
+	}
+
+/**
+ * テストデータの初期値（$prepare）を取得する
+ *
+ * @param int $testNo テストNo
+ * @return array
+ */
+	private function __getPrepare($testNo) {
+		$prepare = array();
+		return $prepare;
 	}
 
 }

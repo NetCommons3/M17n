@@ -62,6 +62,8 @@ class M17nBehaviorSaveTestBase extends M17nModelTestCase {
 		parent::setUp();
 
 		//テストプラグインのロード
+		Current::$current = Hash::insert(Current::$current, 'Block.id', '1');
+
 		$roomId = '2';
 		Current::$current = Hash::insert(Current::$current, 'Room.id', $roomId);
 		$path = $roomId . '.Permission.content_publishable.value';
