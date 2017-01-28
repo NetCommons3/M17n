@@ -204,7 +204,7 @@ class M17nBehaviorSaveTest extends M17nBehaviorSaveTestBase {
 		} elseif ($testNo === 2) {
 			// * 2.「日本語のみ」のデータを英語で編集
 			$expected[0] = array(
-				'TestM17nBSaveWorkflowCategory' => Hash::merge(
+				'TestM17nBSave' => Hash::merge(
 					(new TestM17nBSaveFixture())->records[0],
 					array(
 						'is_translation' => true,

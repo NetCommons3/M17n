@@ -202,7 +202,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 		} elseif ($testNo === 1) {
 			// * 1.「日本語のみ」のデータを日本語で編集
 			$expected[0] = array(
-				'TestM17nBSaveWorkflowCategory' => Hash::merge(
+				'TestM17nBSaveWorkflow' => Hash::merge(
 					(new TestM17nBSaveWorkflowFixture())->records[0],
 					array(
 						'is_active' => true,
@@ -226,7 +226,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 		} elseif ($testNo === 2) {
 			// * 2.「日本語のみ」のデータを英語で編集
 			$expected[0] = array(
-				'TestM17nBSaveWorkflowCategory' => Hash::merge(
+				'TestM17nBSaveWorkflow' => Hash::merge(
 					(new TestM17nBSaveWorkflowFixture())->records[0],
 					array(
 						'is_translation' => true,
@@ -249,8 +249,8 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 		} elseif ($testNo === 3) {
 			// * 3.「日本語、英語」のデータを日本語で編集
 			$expected[0] = array(
-				'TestM17nBSaveWorkflowCategory' => Hash::merge(
-					(new TestM17nBSaveWorkflowFixture())->records[0],
+				'TestM17nBSaveWorkflow' => Hash::merge(
+					(new TestM17nBSaveWorkflowFixture())->records[2],
 					array(
 						'is_active' => true,
 						'is_latest' => false,

@@ -406,7 +406,7 @@ class M17nBehaviorSaveWorkflowTagCategoryTest extends M17nBehaviorSaveTestBase {
 		if (in_array($testNo, [0, 3, 4, 7, 8, 11, 12, 15, 16], true)) {
 			$saveTagData = array(
 				0 => array(
-					'id' => '3',
+					'id' => (string)(count((new Tag4m17nFixture())->records) + 1),
 					'block_id' => '1',
 					'model' => 'TestM17nBSaveWorkflowTagCategory',
 					'key' => Security::hash('Tag', 'md5'),
