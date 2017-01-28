@@ -561,20 +561,6 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 	}
 
 /**
- * save()のテスト
- *
- * @param int $langId 言語ID
- * @param array $data 登録データ
- * @param array $expected 期待値
- * @param array $prepare 関連するデータ作成
- * @dataProvider dataProvider
- * @return void
- */
-	public function testSave($langId, $data, $expected, $prepare) {
-		parent::testSave($langId, $data, $expected, $prepare);
-	}
-
-/**
  * $actualをパースする
  *
  * @param array $actual 結果
