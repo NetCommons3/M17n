@@ -11,6 +11,7 @@
 
 //@codeCoverageIgnoreStart;
 App::uses('M17nModelTestCase', 'M17n.TestSuite');
+App::uses('Current', 'NetCommons.Utility');
 //@codeCoverageIgnoreEnd;
 
 /**
@@ -50,6 +51,32 @@ class M17nBehaviorSaveTestBase extends M17nModelTestCase {
 		}
 		$this->fixtures = array_merge($this->__fixtures, $this->fixtures);
 		parent::__construct($name, $data, $dataName);
+	}
+
+/**
+ * setUp method
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+
+		//テストプラグインのロード
+		$roomId = '2';
+		Current::$current = Hash::insert(Current::$current, 'Room.id', $roomId);
+		$path = $roomId . '.Permission.content_publishable.value';
+		Current::$permission = Hash::insert(Current::$permission, $path, true);
+	}
+
+/**
+ * tearDown method
+ *
+ * @return void
+ */
+	public function tearDown() {
+		Current::$current = array();
+		Current::$permission = array();
+		parent::tearDown();
 	}
 
 /**

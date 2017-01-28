@@ -61,7 +61,7 @@ class UploadFilesContent4m17nFixture extends UploadFilesContentFixture {
 			'id' => '4',
 			'plugin_key' => 'test_m17n',
 			'content_id' => '4',
-			'upload_file_id' => '4',
+			'upload_file_id' => '3',
 		),
 	);
 

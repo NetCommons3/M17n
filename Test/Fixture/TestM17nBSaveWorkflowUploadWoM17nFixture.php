@@ -15,7 +15,7 @@
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\Fixture
  */
-class TestM17nBSaveWorkflowUploadFixture extends CakeTestFixture {
+class TestM17nBSaveWorkflowUploadWoM17nFixture extends CakeTestFixture {
 
 /**
  * Fields

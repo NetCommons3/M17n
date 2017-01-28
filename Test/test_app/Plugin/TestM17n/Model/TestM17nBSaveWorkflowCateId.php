@@ -25,6 +25,7 @@ class TestM17nBSaveWorkflowCateId extends AppModel {
  * @var array
  */
 	public $actsAs = array(
+		'Workflow.Workflow',
 		'M17n.M17n' => array(
 			'commonFields' => array('category_id')
 		),

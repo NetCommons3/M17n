@@ -17,6 +17,13 @@ App::uses('TestM17nBSaveFixture', 'M17n.Test/Fixture');
  *
  * Workflow以外のテスト
  *
+ * ### actAsの定義
+ * ````
+ *	public $actsAs = array(
+ *		'M17n.M17n'
+ *	);
+ * ````
+ *
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\Case\Model\Behavior\M17nBehavior
  */
@@ -61,115 +68,174 @@ class M17nBehaviorSaveTest extends M17nBehaviorSaveTestBase {
 /**
  * テストデータ
  *
+ * ### テストパタン
+ * - 0.コンテンツ新規登録
+ * - 1.「日本語のみ」のデータを日本語で編集
+ * - 2.「日本語のみ」のデータを英語で編集
+ * - 3.「日本語、英語」のデータを日本語で編集
+ *
  * ### 戻り値
- *  - data 登録データ
+ * - langId 言語ID
+ * - data 登録データ
+ * - expected 期待値
+ * - prepare 関連するデータ作成
  *
  * @return array テストデータ
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 	public function dataProvider() {
 		//データ生成
 		$results = array();
 
 		// * 0.コンテンツ新規登録
-		$index = 0;
-		$results[$index]['langId'] = '2';
-		$results[$index]['data'] = array(
-			'TestM17nBSave' => array(
-				'language_id' => $results[$index]['langId'],
-				'key' => 'add_key_1',
-				'content' => 'Test add 1',
-			),
-		);
-		$results[$index]['expected'][0] = Hash::merge($results[$index]['data'], array(
-			'TestM17nBSave' => array(
-				'is_original_copy' => false,
-				'is_origin' => true,
-				'is_translation' => false,
-				'id' => '5',
-			),
-		));
-		$results[$index]['prepare'] = array();
+		$testNo = 0;
+		$results[$testNo]['langId'] = '2';
+		$results[$testNo]['data'] = $this->__getData($testNo, $results[$testNo]['langId']);
+		$results[$testNo]['expected'] = $this->__getExpected($testNo, $results[$testNo]['langId']);
+		$results[$testNo]['prepare'] = array();
 
 		// * 1.「日本語のみ」のデータを日本語で編集
-		$index = 1;
-		$results[$index]['langId'] = '2';
-		$results[$index]['data'] = array(
-			'TestM17nBSave' => array(
-				'id' => '1',
-				'language_id' => $results[$index]['langId'],
-				'key' => 'test_1',
-				'content' => 'Test edit 1',
-			),
-		);
-		$results[$index]['expected'][0] = Hash::merge($results[$index]['data'], array(
-			'TestM17nBSave' => array(
-				'is_original_copy' => false,
-				'is_origin' => true,
-				'is_translation' => false,
-				'created' => (new TestM17nBSaveFixture())->records[0]['created'],
-				'created_user' => (new TestM17nBSaveFixture())->records[0]['created_user'],
-			),
-		));
-		$results[$index]['prepare'] = array();
+		$testNo = 1;
+		$results[$testNo]['langId'] = '2';
+		$results[$testNo]['data'] = $this->__getData($testNo, $results[$testNo]['langId']);
+		$results[$testNo]['expected'] = $this->__getExpected($testNo, $results[$testNo]['langId']);
+		$results[$testNo]['prepare'] = array();
 
 		// * 2.「日本語のみ」のデータを英語で編集
-		$index = 2;
-		$results[$index]['langId'] = '1';
-		$results[$index]['data'] = array(
-			'TestM17nBSave' => array(
-				'id' => '1',
-				'language_id' => $results[$index]['langId'],
-				'key' => 'test_1',
-				'content' => 'Test edit 1',
-			),
-		);
-		$results[$index]['expected'][0] = Hash::merge(
-			array(
-				'TestM17nBSave' => (new TestM17nBSaveFixture())->records[0]
-			),
-			array(
-				'TestM17nBSave' => array(
-					'is_translation' => true,
-				),
-			)
-		);
-		$results[$index]['expected'][1] = Hash::merge($results[$index]['data'], array(
-			'TestM17nBSave' => array(
-				'is_original_copy' => false,
-				'is_origin' => false,
-				'is_translation' => true,
-				'id' => '5',
-			),
-		));
-		$results[$index]['prepare'] = array();
+		$testNo = 2;
+		$results[$testNo]['langId'] = '1';
+		$results[$testNo]['data'] = $this->__getData($testNo, $results[$testNo]['langId']);
+		$results[$testNo]['expected'] = $this->__getExpected($testNo, $results[$testNo]['langId']);
+		$results[$testNo]['prepare'] = array();
 
-		// * 4.「日本語、英語」のデータを日本語で編集
-		$index = 4;
-		$results[$index]['langId'] = '2';
-		$results[$index]['data'] = array(
-			'TestM17nBSave' => array(
-				'id' => '3',
-				'language_id' => $results[$index]['langId'],
-				'key' => 'test_3',
-				'content' => 'Test edit 1',
-			),
-		);
-		$results[$index]['expected'][0] = Hash::merge($results[$index]['data'], array(
-			'TestM17nBSave' => array(
-				'is_original_copy' => false,
-				'is_origin' => true,
-				'is_translation' => true,
-				'created' => (new TestM17nBSaveFixture())->records[2]['created'],
-				'created_user' => (new TestM17nBSaveFixture())->records[2]['created_user'],
-			),
-		));
-		$results[$index]['expected'][1] = array(
-			'TestM17nBSave' => (new TestM17nBSaveFixture())->records[3]
-		);
-		$results[$index]['prepare'] = array();
+		// * 3.「日本語、英語」のデータを日本語で編集
+		$testNo = 3;
+		$results[$testNo]['langId'] = '2';
+		$results[$testNo]['data'] = $this->__getData($testNo, $results[$testNo]['langId']);
+		$results[$testNo]['expected'] = $this->__getExpected($testNo, $results[$testNo]['langId']);
+		$results[$testNo]['prepare'] = array();
 
 		return $results;
+	}
+
+/**
+ * テストデータ（$data）を取得する
+ *
+ * @param int $testNo テストNo
+ * @param int $langId 言語ID
+ * @return array
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ */
+	private function __getData($testNo, $langId) {
+		$data = array();
+
+		if ($testNo === 0) {
+			$data = array(
+				'TestM17nBSave' => array(
+					'language_id' => $langId,
+					'key' => 'add_key_1',
+					'content' => 'Test add 1',
+				),
+			);
+		} elseif (in_array($testNo, [1, 2], true)) {
+			$data = array(
+				'TestM17nBSave' => array(
+					'id' => '1',
+					'language_id' => $langId,
+					'key' => 'test_1',
+					'content' => 'Test edit 1',
+				),
+			);
+		} elseif ($testNo === 3) {
+			$data = array(
+				'TestM17nBSave' => array(
+					'id' => '3',
+					'language_id' => $langId,
+					'key' => 'test_3',
+					'content' => 'Test edit 1',
+				),
+			);
+		}
+
+		return $data;
+	}
+
+/**
+ * テストデータの期待値（$expected）を取得する
+ *
+ * @param int $testNo テストNo
+ * @param int $langId 言語ID
+ * @return array
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ */
+	private function __getExpected($testNo, $langId) {
+		$expected = array();
+
+		if ($testNo === 0) {
+			$expected[0] = Hash::merge(
+				$this->__getData($testNo, $langId),
+				array(
+					'TestM17nBSave' => array(
+						'is_original_copy' => false,
+						'is_origin' => true,
+						'is_translation' => false,
+						'id' => '5',
+					),
+				)
+			);
+		} elseif ($testNo === 1) {
+			$expected[0] = Hash::merge(
+				$this->__getData($testNo, $langId),
+				array(
+					'TestM17nBSave' => array(
+						'is_original_copy' => false,
+						'is_origin' => true,
+						'is_translation' => false,
+						'created' => (new TestM17nBSaveFixture())->records[0]['created'],
+						'created_user' => (new TestM17nBSaveFixture())->records[0]['created_user'],
+					),
+				)
+			);
+		} elseif ($testNo === 2) {
+			$expected[0] = Hash::merge(
+				array(
+					'TestM17nBSave' => (new TestM17nBSaveFixture())->records[0]
+				),
+				array(
+					'TestM17nBSave' => array(
+						'is_translation' => true,
+					),
+				)
+			);
+			$expected[1] = Hash::merge(
+				$this->__getData($testNo, $langId),
+				array(
+					'TestM17nBSave' => array(
+						'is_original_copy' => false,
+						'is_origin' => false,
+						'is_translation' => true,
+						'id' => '5',
+					),
+				)
+			);
+		} elseif ($testNo === 3) {
+			$expected[0] = Hash::merge(
+				$this->__getData($testNo, $langId),
+				array(
+					'TestM17nBSave' => array(
+						'is_original_copy' => false,
+						'is_origin' => true,
+						'is_translation' => true,
+						'created' => (new TestM17nBSaveFixture())->records[2]['created'],
+						'created_user' => (new TestM17nBSaveFixture())->records[2]['created_user'],
+					),
+				)
+			);
+			$expected[1] = array(
+				'TestM17nBSave' => (new TestM17nBSaveFixture())->records[3]
+			);
+		}
+
+		return $expected;
 	}
 
 }
