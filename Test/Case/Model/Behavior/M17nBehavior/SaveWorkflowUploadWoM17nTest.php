@@ -12,6 +12,7 @@
 App::uses('M17nBehaviorSaveTestBase', 'M17n.TestSuite');
 App::uses('TestM17nBSaveWorkflowUploadWoM17nFixture', 'M17n.Test/Fixture');
 App::uses('UploadFile4m17nFixture', 'M17n.Test/Fixture');
+App::uses('UploadFilesContent4m17nFixture', 'M17n.Test/Fixture');
 
 /**
  * M17nBehavior::save()のテスト
@@ -107,8 +108,11 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
  */
 	public function dataProvider() {
 		//データ生成
+		$this->__newId = (string)(count((new TestM17nBSaveWorkflowUploadWoM17nFixture())->records) + 1);
+		$this->__newUploadContentId = (string)(count((new UploadFilesContent4m17nFixture())->records) + 1);
+		$this->__newUploadId = (string)(count((new UploadFile4m17nFixture())->records) + 1);
 		$this->__newUpload = array(
-			'id' => '4',
+			'id' => $this->__newUploadId,
 			'plugin_key' => 'test_m17n',
 			'content_key' => 'add_key_1',
 			'field_name' => 'photo',
@@ -251,6 +255,8 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 	private function __getExpected($testNo, $langId) {
+		$expected = array();
+
 		if (in_array($testNo, [1, 3], true)) {
 			$photo = (new UploadFile4m17nFixture())->records[0];
 		} elseif (in_array($testNo, [2, 4], true)) {
@@ -271,7 +277,7 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => false,
-						'id' => '5',
+						'id' => $this->__newId,
 					),
 					'UploadFile' => array(
 						'photo' => $this->__newUpload,
@@ -300,7 +306,7 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => false,
-						'id' => '5',
+						'id' => $this->__newId,
 					),
 					'UploadFile' => array(
 						'photo' => $photo,
@@ -330,7 +336,7 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 						'is_original_copy' => false,
 						'is_origin' => false,
 						'is_translation' => true,
-						'id' => '5',
+						'id' => $this->__newId,
 					),
 					'UploadFile' => array(
 						'photo' => $photo,
@@ -341,7 +347,7 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 				'TestM17nBSaveWorkflowUploadWoM17n' => Hash::merge(
 					(new TestM17nBSaveWorkflowUploadWoM17nFixture())->records[0],
 					array(
-						'id' => '6',
+						'id' => (string)($this->__newId + 1),
 						'is_active' => true,
 						'is_latest' => true,
 						'is_translation' => true,
@@ -380,7 +386,7 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 				$this->__getData($testNo, $langId),
 				array(
 					'TestM17nBSaveWorkflowUploadWoM17n' => array(
-						'id' => '5',
+						'id' => $this->__newId,
 						'is_active' => false,
 						'is_latest' => true,
 						'is_original_copy' => false,
@@ -396,7 +402,7 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 				'TestM17nBSaveWorkflowUploadWoM17n' => Hash::merge(
 					(new TestM17nBSaveWorkflowUploadWoM17nFixture())->records[3],
 					array(
-					'id' => '6'
+						'id' => (string)($this->__newId + 1),
 					)
 				),
 				'UploadFile' => array(
@@ -433,7 +439,7 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 				$this->__getData($testNo, $langId),
 				array(
 					'TestM17nBSaveWorkflowUploadWoM17n' => array(
-						'id' => '5',
+						'id' => $this->__newId,
 						'is_active' => false,
 						'is_latest' => true,
 						'is_original_copy' => false,
@@ -449,7 +455,7 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 				'TestM17nBSaveWorkflowUploadWoM17n' => Hash::merge(
 					(new TestM17nBSaveWorkflowUploadWoM17nFixture())->records[2],
 					array(
-					'id' => '6'
+						'id' => (string)($this->__newId + 1),
 					)
 				),
 				'UploadFile' => array(
@@ -473,10 +479,10 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 				'Files.UploadFile' => array($this->__newUpload),
 				'Files.UploadFilesContent' => array(
 					array(
-						'id' => '5',
+						'id' => $this->__newUploadContentId,
 						'plugin_key' => 'test_m17n',
-						'content_id' => '5',
-						'upload_file_id' => '4',
+						'content_id' => $this->__newId,
+						'upload_file_id' => $this->__newUploadId,
 					),
 				),
 			);
@@ -484,9 +490,9 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 			$prepare = array(
 				'Files.UploadFilesContent' => array(
 					array(
-						'id' => '5',
+						'id' => $this->__newUploadContentId,
 						'plugin_key' => 'test_m17n',
-						'content_id' => '5',
+						'content_id' => $this->__newId,
 						'upload_file_id' => '1',
 					),
 				),
@@ -498,10 +504,10 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 				),
 				'Files.UploadFilesContent' => array(
 					array(
-						'id' => '5',
+						'id' => $this->__newUploadContentId,
 						'plugin_key' => 'test_m17n',
-						'content_id' => '5',
-						'upload_file_id' => '4',
+						'content_id' => $this->__newId,
+						'upload_file_id' => $this->__newUploadId,
 					),
 				),
 			);
@@ -509,9 +515,9 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 			$prepare = array(
 				'Files.UploadFilesContent' => array(
 					array(
-						'id' => '5',
+						'id' => $this->__newUploadContentId,
 						'plugin_key' => 'test_m17n',
-						'content_id' => '5',
+						'content_id' => $this->__newId,
 						'upload_file_id' => '3',
 					),
 				),
@@ -523,10 +529,10 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 				),
 				'Files.UploadFilesContent' => array(
 					array(
-						'id' => '5',
+						'id' => $this->__newUploadContentId,
 						'plugin_key' => 'test_m17n',
-						'content_id' => '5',
-						'upload_file_id' => '4',
+						'content_id' => $this->__newId,
+						'upload_file_id' => $this->__newUploadId,
 					),
 				),
 			);
@@ -534,9 +540,9 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 			$prepare = array(
 				'Files.UploadFilesContent' => array(
 					array(
-						'id' => '5',
+						'id' => $this->__newUploadContentId,
 						'plugin_key' => 'test_m17n',
-						'content_id' => '5',
+						'content_id' => $this->__newId,
 						'upload_file_id' => '3',
 					),
 				),
@@ -548,30 +554,16 @@ class M17nBehaviorSaveWorkflowUploadWoM17nTest extends M17nBehaviorSaveTestBase 
 				),
 				'Files.UploadFilesContent' => array(
 					array(
-						'id' => '5',
+						'id' => $this->__newUploadContentId,
 						'plugin_key' => 'test_m17n',
-						'content_id' => '5',
-						'upload_file_id' => '4',
+						'content_id' => $this->__newId,
+						'upload_file_id' => $this->__newUploadId,
 					),
 				),
 			);
 		}
 
 		return $prepare;
-	}
-
-/**
- * save()のテスト
- *
- * @param int $langId 言語ID
- * @param array $data 登録データ
- * @param array $expected 期待値
- * @param array $prepare 関連するデータ作成
- * @dataProvider dataProvider
- * @return void
- */
-	public function testSave($langId, $data, $expected, $prepare) {
-		parent::testSave($langId, $data, $expected, $prepare);
 	}
 
 /**

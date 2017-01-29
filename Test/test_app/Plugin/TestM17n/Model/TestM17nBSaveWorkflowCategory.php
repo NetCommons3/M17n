@@ -17,7 +17,7 @@ App::uses('AppModel', 'Model');
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\test_app\Plugin\TestM17n\Model
  */
-class TestM17nBSaveWorkflowCateId extends AppModel {
+class TestM17nBSaveWorkflowCategory extends AppModel {
 
 /**
  * 使用ビヘイビア

@@ -17,8 +17,10 @@
         }
     },
     "require": {
-        "cakedc/migrations":            "~2.2",
-        "netcommons/net-commons":       "@dev"
+        "cakedc/migrations": "~2.2",
+        "netcommons/files": "@dev",
+        "netcommons/net-commons": "@dev",
+        "netcommons/tags": "@dev"
     },
     "config": {
         "vendor-dir": "vendors",

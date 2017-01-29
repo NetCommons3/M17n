@@ -62,6 +62,8 @@ class M17nBehaviorSaveTestBase extends M17nModelTestCase {
 		parent::setUp();
 
 		//テストプラグインのロード
+		Current::$current = Hash::insert(Current::$current, 'Block.id', '1');
+
 		$roomId = '2';
 		Current::$current = Hash::insert(Current::$current, 'Room.id', $roomId);
 		$path = $roomId . '.Permission.content_publishable.value';
@@ -95,15 +97,40 @@ class M17nBehaviorSaveTestBase extends M17nModelTestCase {
 			$model = ClassRegistry::init($modelName);
 			foreach ($preDatas as $preData) {
 				$model->create(false);
-				$result = $model->save($preData, ['validate' => false, 'callbacks' => false]);
+				$model->save($preData, ['validate' => false, 'callbacks' => false]);
 			}
 		}
 		Current::write('Language.id', $langId);
 
 		//テスト実施
+		$this->_executeTestSave($data);
+
+		//結果データ取得
+		$actual = $this->_getActual($data);
+		$actual = $this->_parseActual($actual, $expected);
+
+		//チェック
+		$this->assertEquals($actual, $expected);
+	}
+
+/**
+ * テストの実行
+ *
+ * @param array $data テストデータ
+ * @return void
+ */
+	protected function _executeTestSave($data) {
 		$result = $this->TestModel->save($data);
 		$this->assertNotEmpty($result);
+	}
 
+/**
+ * $actualの取得
+ *
+ * @param array $data テストデータ
+ * @return array
+ */
+	protected function _getActual($data) {
 		$alias = $this->TestModel->alias;
 		$actual = $this->TestModel->find('all', array(
 			'recursive' => 1,
@@ -111,10 +138,8 @@ class M17nBehaviorSaveTestBase extends M17nModelTestCase {
 				$alias . '.' . $this->fieldKey => $data[$alias][$this->fieldKey]
 			)
 		));
-		$actual = $this->_parseActual($actual, $expected);
 
-		//チェック
-		$this->assertEquals($actual, $expected);
+		return $actual;
 	}
 
 /**

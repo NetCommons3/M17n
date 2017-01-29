@@ -15,7 +15,7 @@
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Test\Fixture
  */
-class TestM17nBSaveWorkflowCateIdFixture extends CakeTestFixture {
+class TestM17nBSaveWorkflowTagCategoryFixture extends CakeTestFixture {
 
 /**
  * Fields
@@ -25,6 +25,7 @@ class TestM17nBSaveWorkflowCateIdFixture extends CakeTestFixture {
 	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'comment' => ''),
 		'language_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 6, 'unsigned' => false),
+		'block_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => 'ブロックID'),
 		'category_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => 'カテゴリーID'),
 		'key' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '', 'charset' => 'utf8'),
 		'status' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 4, 'unsigned' => false, 'comment' => ''),
@@ -50,11 +51,12 @@ class TestM17nBSaveWorkflowCateIdFixture extends CakeTestFixture {
  * @var array
  */
 	public $records = array(
-		//日本語のみ、カテゴリID=1
+		//日本語のみ、タグあり
 		array(
 			'id' => '1',
 			'language_id' => '2',
-			'category_id' => null,
+			'block_id' => '1',
+			'category_id' => '1',
 			'key' => 'test_1',
 			'status' => '1',
 			'is_active' => true,
@@ -68,11 +70,12 @@ class TestM17nBSaveWorkflowCateIdFixture extends CakeTestFixture {
 			'modified_user' => '1',
 			'modified' => '2017-01-25 00:00:00'
 		),
-		//英語のみ
+		//英語のみ、タグあり
 		array(
 			'id' => '2',
 			'language_id' => '1',
-			'category_id' => null,
+			'block_id' => '1',
+			'category_id' => '1',
 			'key' => 'test_2',
 			'status' => '1',
 			'is_active' => true,
@@ -86,11 +89,12 @@ class TestM17nBSaveWorkflowCateIdFixture extends CakeTestFixture {
 			'modified_user' => '1',
 			'modified' => '2017-01-25 00:00:00'
 		),
-		//日本語、英語両方あり
+		//日本語、英語両方あり、タグあり
 		array(
 			'id' => '3',
 			'language_id' => '2',
-			'category_id' => null,
+			'block_id' => '1',
+			'category_id' => '1',
 			'key' => 'test_3',
 			'status' => '1',
 			'is_active' => true,
@@ -107,7 +111,8 @@ class TestM17nBSaveWorkflowCateIdFixture extends CakeTestFixture {
 		array(
 			'id' => '4',
 			'language_id' => '1',
-			'category_id' => null,
+			'block_id' => '1',
+			'category_id' => '1',
 			'key' => 'test_3',
 			'status' => '1',
 			'is_active' => true,
@@ -121,10 +126,11 @@ class TestM17nBSaveWorkflowCateIdFixture extends CakeTestFixture {
 			'modified_user' => '1',
 			'modified' => '2017-01-25 00:00:00'
 		),
-		//日本語のみ、カテゴリID=1
+		//日本語のみ、タグなし
 		array(
 			'id' => '5',
 			'language_id' => '2',
+			'block_id' => '1',
 			'category_id' => '1',
 			'key' => 'test_4',
 			'status' => '1',
