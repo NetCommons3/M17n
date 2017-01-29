@@ -86,6 +86,7 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
  */
 	public function dataProvider() {
 		//データ生成
+		$this->__newId = (string)(count((new TestM17nBSaveBlockIdFixture())->records) + 1);
 		$results = array();
 
 		// * 0.コンテンツ新規登録
@@ -176,8 +177,6 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 	private function __getExpected($testNo, $langId) {
 		$expected = array();
 
-		$newId = (string)(count((new TestM17nBSaveBlockIdFixture())->records) + 1);
-
 		if ($testNo === 0) {
 			// * 0.コンテンツ新規登録
 			$expected[0] = Hash::merge(
@@ -187,7 +186,7 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => false,
-						'id' => $newId,
+						'id' => $this->__newId,
 					),
 				)
 			);
@@ -222,7 +221,7 @@ class M17nBehaviorSaveBlockIdTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => false,
 						'is_translation' => true,
-						'id' => $newId,
+						'id' => $this->__newId,
 					),
 				)
 			);
