@@ -174,6 +174,8 @@ class M17nBehaviorSaveTest extends M17nBehaviorSaveTestBase {
 	private function __getExpected($testNo, $langId) {
 		$expected = array();
 
+		$newId = (string)(count((new TestM17nBSaveFixture())->records) + 1);
+
 		if ($testNo === 0) {
 			// * 0.コンテンツ新規登録
 			$expected[0] = Hash::merge(
@@ -183,7 +185,7 @@ class M17nBehaviorSaveTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => false,
-						'id' => '5',
+						'id' => $newId,
 					),
 				)
 			);
@@ -218,7 +220,7 @@ class M17nBehaviorSaveTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => false,
 						'is_translation' => true,
-						'id' => '5',
+						'id' => $newId,
 					),
 				)
 			);

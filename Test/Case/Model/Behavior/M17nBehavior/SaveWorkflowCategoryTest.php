@@ -91,6 +91,7 @@ class M17nBehaviorSaveWorkflowCategoryTest extends M17nBehaviorSaveTestBase {
 	public function dataProvider() {
 		//データ生成
 		$results = array();
+		$this->__newId = (string)(count((new TestM17nBSaveWorkflowCategoryFixture())->records) + 1);
 
 		// * 0.コンテンツ新規登録
 		$testNo = 0;
@@ -231,7 +232,7 @@ class M17nBehaviorSaveWorkflowCategoryTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => false,
-						'id' => '6',
+						'id' => $this->__newId,
 					),
 				)
 			);
@@ -254,7 +255,7 @@ class M17nBehaviorSaveWorkflowCategoryTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => false,
-						'id' => '6',
+						'id' => $this->__newId,
 					),
 				)
 			);
@@ -279,7 +280,7 @@ class M17nBehaviorSaveWorkflowCategoryTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => false,
 						'is_translation' => true,
-						'id' => '6',
+						'id' => $this->__newId,
 					),
 				)
 			);
@@ -309,7 +310,7 @@ class M17nBehaviorSaveWorkflowCategoryTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => true,
-						'id' => '6',
+						'id' => $this->__newId,
 					),
 				)
 			);
@@ -333,7 +334,7 @@ class M17nBehaviorSaveWorkflowCategoryTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => false,
-						'id' => '6',
+						'id' => $this->__newId,
 					),
 				)
 			);
@@ -359,7 +360,7 @@ class M17nBehaviorSaveWorkflowCategoryTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => false,
 						'is_translation' => true,
-						'id' => '6',
+						'id' => $this->__newId,
 					),
 				)
 			);
@@ -371,7 +372,7 @@ class M17nBehaviorSaveWorkflowCategoryTest extends M17nBehaviorSaveTestBase {
 						'is_active' => true,
 						'is_latest' => true,
 						'is_translation' => true,
-						'id' => '7',
+						'id' => (string)($this->__newId + 1),
 					)
 				)
 			);

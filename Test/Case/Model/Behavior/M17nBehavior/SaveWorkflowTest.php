@@ -85,6 +85,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
  */
 	public function dataProvider() {
 		//データ生成
+		$this->__newId = (string)(count((new TestM17nBSaveWorkflowFixture())->records) + 1);
 		$results = array();
 
 		// * 0.コンテンツ新規登録
@@ -195,7 +196,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => false,
-						'id' => '5',
+						'id' => $this->__newId,
 					),
 				)
 			);
@@ -219,7 +220,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => false,
-						'id' => '5',
+						'id' => $this->__newId,
 					),
 				)
 			);
@@ -242,7 +243,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => false,
 						'is_translation' => true,
-						'id' => '5',
+						'id' => $this->__newId,
 					),
 				)
 			);
@@ -272,7 +273,7 @@ class M17nBehaviorSaveWorkflowTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => true,
-						'id' => '5',
+						'id' => $this->__newId,
 					),
 				)
 			);

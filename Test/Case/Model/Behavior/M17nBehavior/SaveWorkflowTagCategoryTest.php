@@ -116,6 +116,8 @@ class M17nBehaviorSaveWorkflowTagCategoryTest extends M17nBehaviorSaveTestBase {
  */
 	public function dataProvider() {
 		//データ生成
+		$this->__newId = (string)(count((new TestM17nBSaveWorkflowTagCategoryFixture())->records) + 1);
+		$this->__newTagId = (string)(count((new Tag4m17nFixture())->records) + 1);
 		$this->__addTagName = 'AddTag';
 		$results = array();
 
@@ -406,7 +408,7 @@ class M17nBehaviorSaveWorkflowTagCategoryTest extends M17nBehaviorSaveTestBase {
 		if (in_array($testNo, [0, 3, 4, 7, 8, 11, 12, 15, 16], true)) {
 			$saveTagData = array(
 				0 => array(
-					'id' => (string)(count((new Tag4m17nFixture())->records) + 1),
+					'id' => $this->__newTagId,
 					'block_id' => '1',
 					'model' => 'TestM17nBSaveWorkflowTagCategory',
 					'key' => Security::hash('Tag', 'md5'),
@@ -438,7 +440,7 @@ class M17nBehaviorSaveWorkflowTagCategoryTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => false,
-						'id' => '6',
+						'id' => $this->__newId,
 					),
 					'Tag' => $saveTagData,
 				)
@@ -469,7 +471,7 @@ class M17nBehaviorSaveWorkflowTagCategoryTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => false,
-						'id' => '6',
+						'id' => $this->__newId,
 					),
 					'Tag' => $saveTagData,
 				)
@@ -503,7 +505,7 @@ class M17nBehaviorSaveWorkflowTagCategoryTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => false,
 						'is_translation' => true,
-						'id' => '6',
+						'id' => $this->__newId,
 					),
 					'Tag' => $saveTagData
 				)
@@ -518,7 +520,7 @@ class M17nBehaviorSaveWorkflowTagCategoryTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => true,
-						'id' => '7',
+						'id' => (string)($this->__newId + 1),
 					)
 				),
 				'Tag' => array(
@@ -563,7 +565,7 @@ class M17nBehaviorSaveWorkflowTagCategoryTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => true,
 						'is_translation' => true,
-						'id' => '6',
+						'id' => $this->__newId,
 					),
 					'Tag' => $saveTagData
 				)
@@ -575,7 +577,7 @@ class M17nBehaviorSaveWorkflowTagCategoryTest extends M17nBehaviorSaveTestBase {
 						'category_id' => $categoryId,
 						'is_active' => true,
 						'is_latest' => true,
-						'id' => '7',
+						'id' => (string)($this->__newId + 1),
 					)
 				),
 				'Tag' => array(
@@ -620,7 +622,7 @@ class M17nBehaviorSaveWorkflowTagCategoryTest extends M17nBehaviorSaveTestBase {
 						'is_original_copy' => false,
 						'is_origin' => false,
 						'is_translation' => true,
-						'id' => '6',
+						'id' => $this->__newId,
 					),
 					'Tag' => $saveTagData
 				)
@@ -632,7 +634,7 @@ class M17nBehaviorSaveWorkflowTagCategoryTest extends M17nBehaviorSaveTestBase {
 						'category_id' => $categoryId,
 						'is_active' => true,
 						'is_latest' => true,
-						'id' => '7',
+						'id' => (string)($this->__newId + 1),
 					)
 				),
 				'Tag' => array(
