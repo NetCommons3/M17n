@@ -104,7 +104,7 @@ class SaveM17nBehavior extends ModelBehavior {
 
 		foreach ($modelNames as $name) {
 			$name = pathinfo($modelPath . DS . $name, PATHINFO_FILENAME);
-			if (is_dir($modelPath . DS . $name)) {
+			if (is_dir($modelPath . DS . $name) || in_array($name, ['UserSearch'], true)) {
 				continue;
 			}
 			$model->loadModels([$name => $camelPluginKey . '.' . $name]);
