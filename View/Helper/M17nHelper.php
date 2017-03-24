@@ -754,4 +754,14 @@ class M17nHelper extends FormHelper {
 		}, $options);
 		return $options;
 	}
+
+/**
+ * 言語名取得
+ *
+ * @param array $languageCode 言語コード(en, ja)
+ * @return string
+ */
+	public function getNameByLangCode($languageCode) {
+		return __d('m17n', Hash::get(self::$languages, $languageCode, 'Unknown'));
+	}
 }
