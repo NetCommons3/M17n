@@ -16,15 +16,25 @@ $enable = array_flip(
 	Hash::extract($switchLanguages, '{n}.Language.code')
 );
 $options = $this->M17n->getLanguagesOptions($enable);
+$langQuery = parse_url($this->request->header('REQUEST_URI'), PHP_URL_QUERY);
+if (preg_match('/lang=[^&]*/i', $langQuery)) {
+	$langQuery = preg_replace('/lang=[^&]*/i', 'lang=%s', $langQuery);
+} elseif ($langQuery) {
+	$langQuery .= '&lang=%s';
+} else{
+	$langQuery = 'lang=%s';
+}
 ?>
 
 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-	<?php echo Hash::get($options, Configure::read('Config.language')); ?> <span class="caret"></span>
+	<?php echo Hash::get($options, Current::read('Language.code')); ?> <span class="caret"></span>
 </a>
 <ul class="dropdown-menu">
 	<?php foreach ($options as $code => $name) : ?>
 		<li>
-			<?php echo $this->NetCommonsHtml->link($name, array('plugin' => 'm17n', 'controller' => 'm17n', 'action' => 'index', '?' => ['language' => $code])); ?>
+			<a href="?<?php echo h(sprintf($langQuery, $code)); ?>">
+				<?php echo h($name); ?>
+			</a>
 		</li>
 	<?php endforeach; ?>
 </ul>
