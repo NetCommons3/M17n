@@ -21,7 +21,7 @@ if (preg_match('/lang=[^&]*/i', $langQuery)) {
 	$langQuery = preg_replace('/lang=[^&]*/i', 'lang=%s', $langQuery);
 } elseif ($langQuery) {
 	$langQuery .= '&lang=%s';
-} else{
+} else {
 	$langQuery = 'lang=%s';
 }
 ?>
