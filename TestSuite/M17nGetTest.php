@@ -20,7 +20,7 @@ App::uses('NetCommonsGetTest', 'NetCommons.TestSuite');
  * @package NetCommons\M17n\TestSuite
  * @codeCoverageIgnore
  */
-class M17nGetTest extends NetCommonsGetTest {
+abstract class M17nGetTest extends NetCommonsGetTest {
 
 /**
  * Fixtures

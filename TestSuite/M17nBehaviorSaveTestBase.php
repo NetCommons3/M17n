@@ -21,7 +21,7 @@ App::uses('Current', 'NetCommons.Utility');
  * @package NetCommons\M17n\TestSuite
  * @codeCoverageIgnore
  */
-class M17nBehaviorSaveTestBase extends M17nModelTestCase {
+abstract class M17nBehaviorSaveTestBase extends M17nModelTestCase {
 
 /**
  * Fixtures
