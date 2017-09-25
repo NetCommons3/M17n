@@ -31,17 +31,20 @@ class SwitchLanguageHelper extends AppHelper {
 /**
  * 言語切り替えタブ
  *
- * @param string $prefix It is id attribute prefix
+ * @param string $prefix タブIDのプレフィックス
+ * @param array $options elementに渡すオプション
  * @return string
  */
-	public function tablist($prefix = null) {
+	public function tablist($prefix = null, $options = []) {
 		$this->NetCommonsHtml->css('/m17n/css/style.css');
 
-		return $this->_View->element('M17n.switch_language', array(
-			'prefix' => $prefix,
-			'languages' => $this->_View->viewVars['languages'],
-			'activeLangId' => $this->_View->viewVars['activeLangId'],
-		));
+		return $this->_View->element('M17n.switch_language',
+			array_merge(array(
+				'prefix' => $prefix,
+				'languages' => $this->_View->viewVars['languages'],
+				'activeLangId' => $this->_View->viewVars['activeLangId'],
+			), $options)
+		);
 	}
 
 /**
