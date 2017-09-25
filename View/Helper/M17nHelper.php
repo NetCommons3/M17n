@@ -748,7 +748,10 @@ class M17nHelper extends FormHelper {
  * @return array
  */
 	public function getLanguagesOptions($enable) {
-		$options = array_intersect_key(self::$languages, $enable);
+		$enable = array_keys($enable);
+		foreach ($enable as $lang) {
+			$options[$lang] = self::$languages[$lang];
+		}
 		$options = array_map(function ($value) {
 			return __d('m17n', $value);
 		}, $options);
