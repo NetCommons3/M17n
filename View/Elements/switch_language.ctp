@@ -26,7 +26,7 @@ if (! isset($position)) {
 		<?php foreach ($languages as $langId => $langCode) : ?>
 			<li class="<?php echo ($activeLangId === (string)$langId ? 'active' : ''); ?>">
 				<a class="nc-switch-language" href="#<?php echo $prefix . $langId ?>" role="tab" data-toggle="tab"
-					ng-click="activeLangId = '<?php echo $langId; ?>'">
+					ng-click="activeLangId = '<?php echo $langId; ?>'" onclick="return false;">
 
 					<?php $catalog = $L10n->catalog($langCode);
 							echo __d('m17n', $catalog['language']); ?>
