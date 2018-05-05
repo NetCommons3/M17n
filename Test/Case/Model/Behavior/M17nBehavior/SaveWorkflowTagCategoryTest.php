@@ -413,6 +413,9 @@ class M17nBehaviorSaveWorkflowTagCategoryTest extends M17nBehaviorSaveTestBase {
 					'model' => 'TestM17nBSaveWorkflowTagCategory',
 					'key' => Security::hash('Tag', 'md5'),
 					'language_id' => $langId,
+					'is_origin' => true,
+					'is_translation' => false,
+					'is_original_copy' => false,
 				)
 			);
 		} elseif (in_array($testNo, [1, 2, 5, 6, 9, 10], true)) {

@@ -46,6 +46,9 @@ class Tag4m17nFixture extends TagFixture {
 			'model' => 'TestM17nBSaveWorkflowTagCategory',
 			'key' => 'tag_1',
 			'language_id' => '2',
+			'is_origin' => true,
+			'is_translation' => false,
+			'is_original_copy' => false,
 			'name' => 'TagJa1',
 		),
 		//英語のみ
@@ -55,6 +58,9 @@ class Tag4m17nFixture extends TagFixture {
 			'model' => 'TestM17nBSaveWorkflowTagCategory',
 			'key' => 'tag_2',
 			'language_id' => '1',
+			'is_origin' => true,
+			'is_translation' => false,
+			'is_original_copy' => false,
 			'name' => 'TagEn2',
 		),
 	);

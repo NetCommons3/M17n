@@ -94,6 +94,16 @@ class Language extends M17nAppModel {
 
 		if ($type === 'list' && ! isset($options['fields'])) {
 			$options['fields'] = array('id', 'code');
+		} elseif (! isset($options['fields'])) {
+			$options['fields'] = [
+				'id', 'code', 'weight', 'is_active'
+			];
+		}
+
+		if ($type !== 'first' && ! isset($options['order'])) {
+			$options['order'] = [
+				'weight' => 'asc'
+			];
 		}
 
 		$languages = $this->find($type, Hash::merge(array(
@@ -101,7 +111,6 @@ class Language extends M17nAppModel {
 			'conditions' => array(
 				'is_active' => true
 			),
-			'order' => array('weight' => 'asc')
 		), $options));
 		return $languages;
 	}
@@ -118,6 +127,9 @@ class Language extends M17nAppModel {
 
 		self::$languages = $this->find('all', array(
 			'recursive' => -1,
+			'fields' => [
+				'id', 'code', 'weight', 'is_active'
+			],
 			'conditions' => array(
 				'is_active' => true
 			),
