@@ -1,6 +1,6 @@
 <?php
 /**
- * AddIndex migration
+ * 速度改善のためのインデックス見直し
  *
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @link http://www.netcommons.org NetCommons Project
@@ -8,19 +8,22 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
+App::uses('NetCommonsMigration', 'NetCommons.Config/Migration');
+
 /**
- * AddIndex migration
+ * 速度改善のためのインデックス見直し
  *
+ * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\M17n\Config\Migration
  */
-class AddIndex extends CakeMigration {
+class ForSpeedup extends NetCommonsMigration {
 
 /**
  * Migration description
  *
  * @var string
  */
-	public $description = 'add_index';
+	public $description = 'for_speedup';
 
 /**
  * Actions to be performed
@@ -29,23 +32,23 @@ class AddIndex extends CakeMigration {
  */
 	public $migration = array(
 		'up' => array(
-			'alter_field' => array(
-				'languages' => array(
-					'is_active' => array('type' => 'boolean', 'null' => true, 'default' => null, 'key' => 'index', 'comment' => 'アクティブフラグ 1:アクティブ、0:非アクティブ'),
-				),
+			'drop_field' => array(
+				'languages' => array('indexes' => array('is_active')),
 			),
 			'create_field' => array(
 				'languages' => array(
 					'indexes' => array(
-						'is_active' => array('column' => 'is_active', 'unique' => 0),
+						'is_active' => array('column' => array('is_active', 'weight', 'code', 'id'), 'unique' => 0),
 					),
 				),
 			),
 		),
 		'down' => array(
-			'alter_field' => array(
+			'create_field' => array(
 				'languages' => array(
-					'is_active' => array('type' => 'boolean', 'null' => true, 'default' => null, 'comment' => 'アクティブフラグ 1:アクティブ、0:非アクティブ'),
+					'indexes' => array(
+						'is_active' => array(),
+					),
 				),
 			),
 			'drop_field' => array(

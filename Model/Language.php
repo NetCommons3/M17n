@@ -10,7 +10,6 @@
  */
 
 App::uses('M17nAppModel', 'M17n.Model');
-App::uses('M17n.M17nHelper', 'M17n.Controller');
 
 /**
  * Language Model
@@ -19,6 +18,16 @@ App::uses('M17n.M17nHelper', 'M17n.Controller');
  * @package NetCommons\M17n\Model
  */
 class Language extends M17nAppModel {
+
+/**
+ * Language code map
+ *
+ * @var array
+ */
+	private $__labelLanguages = [
+		'en' => 'English',
+		'ja' => 'Japanese',
+	];
 
 /**
  * Validation rules
@@ -94,6 +103,16 @@ class Language extends M17nAppModel {
 
 		if ($type === 'list' && ! isset($options['fields'])) {
 			$options['fields'] = array('id', 'code');
+		} elseif (! isset($options['fields'])) {
+			$options['fields'] = [
+				'id', 'code', 'weight', 'is_active'
+			];
+		}
+
+		if ($type !== 'first' && ! isset($options['order'])) {
+			$options['order'] = [
+				'weight' => 'asc'
+			];
 		}
 
 		$languages = $this->find($type, Hash::merge(array(
@@ -101,7 +120,6 @@ class Language extends M17nAppModel {
 			'conditions' => array(
 				'is_active' => true
 			),
-			'order' => array('weight' => 'asc')
 		), $options));
 		return $languages;
 	}
@@ -118,6 +136,9 @@ class Language extends M17nAppModel {
 
 		self::$languages = $this->find('all', array(
 			'recursive' => -1,
+			'fields' => [
+				'id', 'code', 'weight', 'is_active'
+			],
 			'conditions' => array(
 				'is_active' => true
 			),
@@ -133,17 +154,22 @@ class Language extends M17nAppModel {
  * @return array
  */
 	public function getLanguagesWithName() {
-		$languages = $this->find('list', array(
+		$languages = $this->find('all', array(
 			'fields' => array('code', 'is_active'),
 			'recursive' => -1,
 		));
-		$activeLangs = array();
-		$enableLangs = array_intersect_key(M17nHelper::$languages, $languages);
-		foreach ($enableLangs as $code => $value) {
-			if ($languages[$code]) {
+
+		$activeLangs = [];
+		$enableLangs = [];
+		foreach ($languages as $lang) {
+			$code = $lang[$this->alias]['code'];
+			if (! isset($this->__labelLanguages[$code])) {
+				continue;
+			}
+			$enableLangs[$code] = __d('m17n', $this->__labelLanguages[$code]);
+			if ($lang[$this->alias]['is_active']) {
 				$activeLangs[] = $code;
 			}
-			$enableLangs[$code] = __d('m17n', $value);
 		}
 
 		return array($activeLangs, $enableLangs);

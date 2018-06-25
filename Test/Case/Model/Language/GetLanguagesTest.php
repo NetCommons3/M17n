@@ -70,10 +70,6 @@ class LanguageGetLanguagesTest extends M17nGetTest {
 					'code' => 'en',
 					'weight' => '1',
 					'is_active' => true,
-					'created_user' => null,
-					'created' => '2014-07-03 05:00:39',
-					'modified_user' => null,
-					'modified' => '2014-07-03 05:00:39',
 				),
 			),
 			1 => array(
@@ -82,10 +78,6 @@ class LanguageGetLanguagesTest extends M17nGetTest {
 					'code' => 'ja',
 					'weight' => '2',
 					'is_active' => true,
-					'created_user' => null,
-					'created' => '2014-07-03 05:00:39',
-					'modified_user' => null,
-					'modified' => '2014-07-03 05:00:39',
 				),
 			),
 		);
