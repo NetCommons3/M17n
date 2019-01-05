@@ -149,7 +149,7 @@ class Language extends M17nAppModel {
 				'is_active' => true
 			),
 		));
-		return $result;
+		return $result > 1;
 	}
 
 /**
