@@ -52,26 +52,4 @@ abstract class M17nGetTest extends NetCommonsGetTest {
 		parent::__construct($name, $data, $dataName);
 	}
 
-/**
- * setUp method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-
-		Language::$languages = array();
-	}
-
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		Language::$languages = array();
-
-		parent::tearDown();
-	}
-
 }
