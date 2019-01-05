@@ -84,23 +84,4 @@ class LanguageGetLanguagesTest extends M17nGetTest {
 		$this->assertEquals($expected, $result);
 	}
 
-/**
- * getLanguages()の既に取得済みの場合のテスト
- *
- * @return void
- */
-	public function testGetLanguagesWithData() {
-		$model = $this->_modelName;
-		$methodName = $this->_methodName;
-
-		Language::$languages = array('test dummy');
-
-		//テスト実施
-		$result = $this->$model->$methodName();
-
-		//チェック
-		$expected = array('test dummy');
-		$this->assertEquals($expected, $result);
-	}
-
 }

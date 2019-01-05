@@ -37,19 +37,13 @@ class Language extends M17nAppModel {
 	public $validate = array();
 
 /**
- * 言語データ
- *
- * @var array
- */
-	public static $languages = array();
-
-/**
  * use behaviors
  *
  * @var array
  */
 	public $actsAs = array(
 		'M17n.SaveM17n',
+		'NetCommons.NetCommonsCache',
 	);
 
 /**
@@ -115,7 +109,7 @@ class Language extends M17nAppModel {
 			];
 		}
 
-		$languages = $this->find($type, Hash::merge(array(
+		$languages = $this->cacheFindQuery($type, Hash::merge(array(
 			'recursive' => -1,
 			'conditions' => array(
 				'is_active' => true
@@ -130,11 +124,7 @@ class Language extends M17nAppModel {
  * @return array
  */
 	public function getLanguages() {
-		if (self::$languages) {
-			return self::$languages;
-		}
-
-		self::$languages = $this->find('all', array(
+		$result = $this->cacheFindQuery('all', array(
 			'recursive' => -1,
 			'fields' => [
 				'id', 'code', 'weight', 'is_active'
@@ -144,8 +134,22 @@ class Language extends M17nAppModel {
 			),
 			'order' => array('weight' => 'asc')
 		));
+		return $result;
+	}
 
-		return self::$languages;
+/**
+ * 複数言語か否か
+ *
+ * @return bool
+ */
+	public function isMultipleLang() {
+		$result = $this->cacheFindQuery('count', array(
+			'recursive' => -1,
+			'conditions' => array(
+				'is_active' => true
+			),
+		));
+		return $result;
 	}
 
 /**
@@ -154,22 +158,30 @@ class Language extends M17nAppModel {
  * @return array
  */
 	public function getLanguagesWithName() {
-		$languages = $this->find('all', array(
+		$languages = $this->cacheFindQuery('all', array(
 			'fields' => array('code', 'is_active'),
 			'recursive' => -1,
 		));
 
-		$activeLangs = [];
-		$enableLangs = [];
-		foreach ($languages as $lang) {
-			$code = $lang[$this->alias]['code'];
-			if (! isset($this->__labelLanguages[$code])) {
-				continue;
+		$activeLangs = $this->cacheRead('activeLangs');
+		$enableLangs = $this->cacheRead('enableLangs');
+		if (! $activeLangs || ! $enableLangs) {
+			$activeLangs = [];
+			$enableLangs = [];
+			foreach ($languages as $lang) {
+				$code = $lang[$this->alias]['code'];
+				if (! isset($this->__labelLanguages[$code])) {
+					continue;
+				}
+				$enableLangs[$code] = __d('m17n', $this->__labelLanguages[$code]);
+				if ($lang[$this->alias]['is_active']) {
+					$activeLangs[] = $code;
+				}
 			}
-			$enableLangs[$code] = __d('m17n', $this->__labelLanguages[$code]);
-			if ($lang[$this->alias]['is_active']) {
-				$activeLangs[] = $code;
-			}
+
+			//キャッシュの書き込み
+			$this->cacheWrite($activeLangs, 'activeLangs');
+			$this->cacheWrite($enableLangs, 'enableLangs');
 		}
 
 		return array($activeLangs, $enableLangs);
@@ -209,7 +221,10 @@ class Language extends M17nAppModel {
 			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 		}
 
-		$languages = $this->find('list', array(
+		//キャッシュのクリア
+		$this->cacheClear();
+
+		$languages = $this->cacheFindQuery('list', array(
 			'recursive' => -1,
 			'conditions' => array(
 				'is_active' => true,
@@ -231,7 +246,7 @@ class Language extends M17nAppModel {
 	public function validateActive($data) {
 		$fieldName = 'Language.code';
 
-		$languages = $this->find('list', array(
+		$languages = $this->cacheFindQuery('list', array(
 			'fields' => array('code', 'is_active'),
 			'recursive' => -1,
 		));
