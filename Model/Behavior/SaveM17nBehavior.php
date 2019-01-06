@@ -65,7 +65,7 @@ class SaveM17nBehavior extends ModelBehavior {
 				continue;
 			}
 
-			$plugin = $model->Plugin->find('first', array(
+			$plugin = $model->Plugin->cacheFindQuery('first', array(
 				'recursive' => -1,
 				'conditions' => array(
 					'key' => Inflector::underscore($pluginDir),
