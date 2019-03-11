@@ -175,30 +175,22 @@ class M17nBehavior extends ModelBehavior {
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 	public function beforeSave(Model $model, $options = array()) {
-$this->log($model->alias . ' ' . __LINE__, 'debug');
-if ($model->alias == 'CategoriesLanguage') {
-$this->log($model->data, 'debug');
-}
 		if (! $this->_hasM17nFields($model)) {
 			return true;
 		}
-$this->log($model->alias . ' ' . __LINE__, 'debug');
 
 		$keyField = $this->settings[$model->name]['keyField'];
 		if (! $keyField) {
 			return true;
 		}
-$this->log($model->alias . ' ' . __LINE__, 'debug');
 
 		if (! $this->isM17nGeneralPlugin($model)) {
 			return true;
 		}
-$this->log($model->alias . ' ' . __LINE__, 'debug');
 
 		if ($model->hasField('is_original_copy')) {
 			$model->data[$model->alias]['is_original_copy'] = false;
 		}
-$this->log($model->alias . ' ' . __LINE__, 'debug');
 
 		//チェックするためのWHERE条件
 		if ($this->_hasWorkflowFields($model)) {
@@ -212,7 +204,6 @@ $this->log($model->alias . ' ' . __LINE__, 'debug');
 				'language_id' => Current::read('Language.id'),
 				'is_latest' => true
 			);
-$this->log($model->alias . ' ' . __LINE__, 'debug');
 		} else {
 			$transConditions = array(
 				$keyField => $model->data[$model->alias][$keyField],
@@ -222,7 +213,6 @@ $this->log($model->alias . ' ' . __LINE__, 'debug');
 				$keyField => $model->data[$model->alias][$keyField],
 				'language_id' => Current::read('Language.id')
 			);
-$this->log($model->alias . ' ' . __LINE__, 'debug');
 		}
 
 		//データが1件もないことを確認する
@@ -233,10 +223,6 @@ $this->log($model->alias . ' ' . __LINE__, 'debug');
 				$keyField => $model->data[$model->alias][$keyField]
 			),
 		));
-$this->log($model->alias . ' ' . __LINE__, 'debug');
-if ($model->alias == 'CategoriesLanguage') {
-$this->log($model->data, 'debug');
-}
 		if ($count <= 0) {
 			$model->data[$model->alias]['language_id'] = Current::read('Language.id');
 			$model->data[$model->alias]['is_origin'] = true;
@@ -244,7 +230,6 @@ $this->log($model->data, 'debug');
 
 			return true;
 		}
-$this->log($model->alias . ' ' . __LINE__, 'debug');
 
 		$model->data[$model->alias]['language_id'] = Current::read('Language.id');
 
@@ -259,7 +244,6 @@ $this->log($model->alias . ' ' . __LINE__, 'debug');
 		} else {
 			$model->data[$model->alias]['is_translation'] = false;
 		}
-$this->log($model->alias . ' ' . __LINE__, 'debug');
 
 		//当言語のデータのチェック
 		$data = $model->find('first', array(
@@ -275,12 +259,6 @@ $this->log($model->alias . ' ' . __LINE__, 'debug');
 			$model->data[$model->alias] = Hash::remove($model->data[$model->alias], 'id');
 			$model->id = null;
 		}
-$this->log($model->alias . ' ' . __LINE__, 'debug');
-if ($model->alias == 'CategoriesLanguage') {
-$this->log($model->data, 'debug');
-}
-
-
 		return parent::beforeSave($model, $options);
 	}
 
