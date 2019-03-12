@@ -157,8 +157,7 @@ class M17nBehavior extends ModelBehavior {
 		if (Current::read('Plugin.type') !== Plugin::PLUGIN_TYPE_FOR_FRAME) {
 			return true;
 		}
-		if (! Current::read('Room.id') || ! Current::read('Plugin.is_m17n') ||
-				! Current::read('Space.is_m17n')) {
+		if (! Current::read('Room.id') || ! Current::read('Plugin.is_m17n')) {
 			return false;
 		}
 
@@ -260,7 +259,6 @@ class M17nBehavior extends ModelBehavior {
 			$model->data[$model->alias] = Hash::remove($model->data[$model->alias], 'id');
 			$model->id = null;
 		}
-
 		return parent::beforeSave($model, $options);
 	}
 
