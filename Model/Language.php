@@ -56,7 +56,7 @@ class Language extends M17nAppModel {
  * @see Model::save()
  */
 	public function beforeValidate($options = array()) {
-		$this->validate = Hash::merge($this->validate, array(
+		$this->validate = ValidateMerge::merge($this->validate, array(
 			'code' => array(
 				'notBlank' => array(
 					'rule' => array('notBlank'),
