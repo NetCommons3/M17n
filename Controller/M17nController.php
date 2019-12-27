@@ -24,7 +24,7 @@ class M17nController extends M17nAppController {
  * @return void
  */
 	public function index() {
-		$this->redirect($this->request->referer());
+		$this->redirect($this->request->referer(true));
 	}
 
 }
